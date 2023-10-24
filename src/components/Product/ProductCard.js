@@ -1,13 +1,18 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, Pressable } from "react-native";
 import React from "react";
 import { HeartIcon } from "react-native-heroicons/outline";
 import { StarIcon } from "react-native-heroicons/outline";
+import { useNavigation } from "@react-navigation/native";
 
 const ProductCard = () => {
+  const navigation = useNavigation();
   return (
     <>
       <View className="flex-row space-x-1">
-        <View className="  gap-3  mt-5">
+        <Pressable
+          onPress={() => navigation.navigate("ProductDetails")}
+          className="  gap-3  mt-5"
+        >
           <View className="w-60 h-60 relative">
             <View className="w-60 h-60 left-0 top-0 absolute bg-gray-50 rounded-3xl shadow-sm" />
             <View className="left-0 top-0 absolute justify-center items-center inline-flex">
@@ -45,7 +50,7 @@ const ProductCard = () => {
               $29
             </Text>
           </View>
-        </View>
+        </Pressable>
         <View className=" gap-3  mt-5">
           <View className="w-60 h-60 relative">
             <View className="w-60 h-60 left-0 top-0 absolute bg-gray-50 rounded-3xl shadow-sm" />
