@@ -1,11 +1,13 @@
-import { View, Text } from "react-native";
+import { View, Text, SafeAreaView, ScrollView } from "react-native";
 import React from "react";
 
 const Orderscreen = () => {
   return (
-    <View>
-      <Text>Orderscreen</Text>
-    </View>
+    <SafeAreaView className="flex-1 bg-gray-50">
+      <ScrollView showsVerticalScrollIndicator={false} className="">
+        <Text>Orderscreen</Text>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

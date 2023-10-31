@@ -11,6 +11,7 @@ import Cartscreen from "../screens/Cartscreen/Cartscreen";
 import Orderscreen from "../screens/Orderscreen/Orderscreen";
 import Walletscreen from "../screens/Walletscreen/Walletscreen";
 import ProductDetailsscreen from "../screens/ProductDetailsScreen/ProductDetails";
+import CheckoutScreen from "../screens/CheckoutScreen/CheckoutScreen";
 
 // Screen names
 const homeName = "Home";
@@ -34,6 +35,11 @@ function AppNavigation() {
         <Stack.Screen
           name="ProductDetails"
           component={ProductDetailsscreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Checkout"
+          component={CheckoutScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
