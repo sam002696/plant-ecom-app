@@ -13,6 +13,7 @@ import Walletscreen from "../screens/Walletscreen/Walletscreen";
 import ProductDetailsscreen from "../screens/ProductDetailsScreen/ProductDetails";
 import CheckoutScreen from "../screens/CheckoutScreen/CheckoutScreen";
 import TrackOrder from "../screens/TrackOrderScreen/TrackOrder";
+import EditProfile from "../screens/Profilescreen/EditProfile";
 
 // Screen names
 const homeName = "Home";
@@ -46,6 +47,11 @@ function AppNavigation() {
         <Stack.Screen
           name="TrackOrder"
           component={TrackOrder}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="EditProfile"
+          component={EditProfile}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

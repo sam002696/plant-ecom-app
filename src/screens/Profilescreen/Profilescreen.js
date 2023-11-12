@@ -1,8 +1,21 @@
-import { View, Text, SafeAreaView, ScrollView, Image } from "react-native";
+import {
+  View,
+  Text,
+  SafeAreaView,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import React from "react";
-import { EllipsisHorizontalCircleIcon } from "react-native-heroicons/outline";
+import {
+  ChevronRightIcon,
+  EllipsisHorizontalCircleIcon,
+  UserIcon,
+} from "react-native-heroicons/outline";
+import { useNavigation } from "@react-navigation/native";
 
 const Profilescreen = () => {
+  const navigation = useNavigation();
   return (
     <SafeAreaView className="bg-gray-50 flex-1">
       <ScrollView showsVerticalScrollIndicator={false} className="mt-10">
@@ -24,7 +37,7 @@ const Profilescreen = () => {
 
         {/* User Info */}
 
-        <View className="text-center justify-center flex-col mt-5 items-center space-y-2">
+        <View className="text-center justify-center flex-col  items-center space-y-2 mt-10">
           <Image
             className="w-[120px] h-[120px] rounded-full"
             source={require("../../../assets/images/user/user.png")}
@@ -37,8 +50,25 @@ const Profilescreen = () => {
           </Text>
         </View>
 
-        <View className="w-[380px] h-[0px] justify-center items-center inline-flex mt-5 mx-3">
+        {/* Border */}
+
+        <View className="w-[380px] h-[0px] justify-center items-center inline-flex mt-5  mx-auto">
           <View className="w-[380px] h-[0px] border border-zinc-100"></View>
+        </View>
+
+        {/* Links */}
+
+        {/* Edit Profile */}
+
+        <View className="flex-row justify-between mx-3 mt-8 items-center">
+          <View className=" flex-row space-x-2 items-center">
+            <UserIcon size={20} font="bold" color="black" />
+            <Text>Edit Profile</Text>
+          </View>
+
+          <TouchableOpacity onPress={() => navigation.navigate("EditProfile")}>
+            <ChevronRightIcon size={20} font="bold" color="black" />
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
