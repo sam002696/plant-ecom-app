@@ -52,6 +52,12 @@ const EditProfile = () => {
 
   const navigation = useNavigation();
 
+  const [selectedGender, setSelectedGender] = useState("");
+
+  const handleGenderChange = (itemValue) => {
+    setSelectedGender(itemValue);
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView showsVerticalScrollIndicator={false} className="mt-10">
@@ -188,7 +194,7 @@ const EditProfile = () => {
           />
 
           {/* Gender */}
-          <Controller
+          {/* <Controller
             control={control}
             render={({ field, fieldState }) => (
               <>
@@ -229,7 +235,24 @@ const EditProfile = () => {
             )}
             name="gender"
             rules={{ required: "Gender is required" }}
-          />
+          /> */}
+
+          {/* <View>
+            <Text>Select Gender:</Text>
+            <Picker
+              selectedValue={selectedGender}
+              onValueChange={handleGenderChange}
+              style={{ height: 50, width: 200 }}
+            >
+              <Picker.Item label="Select Gender" value="" />
+              <Picker.Item label="Male" value="male" />
+              <Picker.Item label="Female" value="female" />
+              Add more gender options as needed
+            </Picker>
+            {selectedGender !== "" && (
+              <Text>Selected Gender: {selectedGender}</Text>
+            )}
+          </View> */}
 
           <Button title="Submit" onPress={handleSubmit(onSubmit)} />
         </View>
