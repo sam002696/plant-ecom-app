@@ -14,6 +14,9 @@ import ProductDetailsscreen from "../screens/ProductDetailsScreen/ProductDetails
 import CheckoutScreen from "../screens/CheckoutScreen/CheckoutScreen";
 import TrackOrder from "../screens/TrackOrderScreen/TrackOrder";
 import EditProfile from "../screens/Profilescreen/EditProfile";
+import LoginScreen from "../components/Authentication/LoginScreen";
+import SignUpScreen from "../components/Authentication/SignUpScreen";
+import WelcomeScreen from "../components/Screens/WelcomeScreen";
 
 // Screen names
 const homeName = "Home";
@@ -28,10 +31,25 @@ const Tab = createBottomTabNavigator();
 function AppNavigation() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator initialRouteName="Welcome">
         <Stack.Screen
           name="Main"
           component={MainNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="SignUp"
+          component={SignUpScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Welcome"
+          component={WelcomeScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
