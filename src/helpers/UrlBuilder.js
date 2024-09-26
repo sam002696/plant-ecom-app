@@ -14,6 +14,10 @@ class UrlBuilderHelper {
   plantApi(path) {
     return `http://192.168.68.101:9000/api/v1/${path}`; // plant api
   }
+
+  plantApiLocalhost(path) {
+    return `http://localhost:9000/api/v1/${path}`; // plant api
+  }
 }
 
 export const UrlBuilder = new UrlBuilderHelper();
