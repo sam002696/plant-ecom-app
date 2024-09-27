@@ -2,8 +2,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 class AuthUserHelper {
   async getUser() {
-    const user = JSON.parse((await AsyncStorage.getItem("auth_user")) || "{}");
-    return user || {};
+    try {
+      const authUser = await AsyncStorage.getItem("auth_user");
+      // Check if authUser exists and parse it, otherwise return an empty object
+      return authUser ? JSON.parse(authUser) : {};
+    } catch (error) {
+      console.error("Error retrieving user data:", error);
+      return {}; // Return an empty object if there's an error
+    }
   }
 
   async getUserId() {
@@ -67,27 +73,14 @@ class AuthUserHelper {
   }
 
   async saveLoginData(authData) {
-    // save token
-    let token = authData.accessToken || "";
-    await AsyncStorage.setItem("access_token", token);
-
-    // save user
-    await AsyncStorage.setItem("auth_user", JSON.stringify(authData?.user));
-
-    // save institute id
-    if (authData.instituteResponse !== undefined) {
-      await AsyncStorage.setItem(
-        "institute_id",
-        JSON.stringify(authData?.instituteResponse)
-      );
+    try {
+      console.log("saving login data :", authData);
+      let token = authData.data.accessToken || "";
+      await AsyncStorage.setItem("access_token", token);
+      await AsyncStorage.setItem("auth_user", JSON.stringify(authData?.data));
+    } catch (e) {
+      console.error("Error saving login data:", e);
     }
-
-    // save user roles
-    let roles = [];
-    authData?.roles?.forEach((item) => {
-      roles.push(item.roleName);
-    });
-    await AsyncStorage.setItem("auth_roles", JSON.stringify(roles));
   }
 
   async removeLoginData() {

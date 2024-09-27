@@ -1,5 +1,5 @@
 import { call, put, takeEvery } from "redux-saga/effects";
-// import { failed, succeed } from "../reducers/apiSlice";
+import { failed, succeed } from "../reducers/apiSlice";
 import fetcher from "../lib/fetcher";
 // import { setToastAlert } from "../reducers/toastAlertSlice";
 // import { setErrorMessage } from "../reducers/errorMessageSlice";
@@ -34,14 +34,14 @@ function* performApiAction(action) {
     //   );
     // }
 
-    // yield put(
-    //   succeed({
-    //     response,
-    //     output,
-    //   })
-    // );
+    yield put(
+      succeed({
+        response,
+        output,
+      })
+    );
 
-    //let errors =  response.errors;
+    let errors = response.errors;
     if (response.errors !== null) {
       yield put(
         setErrorMessage({
@@ -51,15 +51,15 @@ function* performApiAction(action) {
       );
     }
   } catch (error) {
-    // yield put(
-    //   failed({
-    //     error: error.response
-    //       ? error.response.obj.error
-    //       : {
-    //           message: "Api call failed or check your internet connection",
-    //         },
-    //   })
-    // );
+    yield put(
+      failed({
+        error: error.response
+          ? error.response.obj.error
+          : {
+              message: "Api call failed or check your internet connection",
+            },
+      })
+    );
     console.log(error);
   }
 }

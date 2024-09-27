@@ -7,19 +7,44 @@ import {
   TextInput,
   Image,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { theme } from "../../theme";
 import { useNavigation } from "@react-navigation/native";
 import { ArrowLeftIcon } from "react-native-heroicons/outline";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { useDispatch } from "react-redux";
-import { callApi } from "../../reducers/apiSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { callApi, selectApi } from "../../reducers/apiSlice";
 import { UrlBuilder } from "../../helpers/UrlBuilder";
+import { AuthUser } from "../../helpers/AuthUser";
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
+
+  const {
+    authData = {
+      data: {},
+    },
+  } = useSelector(selectApi);
+
+  console.log("login authdata", authData.data);
+
+  useEffect(() => {
+    const handleAuthData = async () => {
+      // If the user logs in successfully (based on accessToken), save the login data
+      if (authData.data.accessToken) {
+        try {
+          await AuthUser.saveLoginData(authData); // Save data to AuthUser
+          console.log("User data saved:", authData.data);
+        } catch (error) {
+          console.error("Error saving login data:", error);
+        }
+      }
+    };
+
+    handleAuthData();
+  }, [authData]);
 
   const validationSchema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Email is required"),
@@ -27,6 +52,8 @@ const LoginScreen = () => {
       .min(6, "Password should be at least 6 characters")
       .required("Password is required"),
   });
+
+  // Access user data anywhere in your app synchronously
 
   return (
     <View

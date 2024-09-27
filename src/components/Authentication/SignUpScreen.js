@@ -7,12 +7,25 @@ import {
   TextInput,
   Image,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { theme } from "../../theme";
 import { useNavigation } from "@react-navigation/native";
 import { ArrowLeftIcon } from "react-native-heroicons/outline";
+import { AuthUser } from "../../helpers/AuthUser";
 
 const SignUpScreen = () => {
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userData = await AuthUser.getUser(); // Await for user data
+        console.log("User data: ", userData);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
   const navigation = useNavigation();
   return (
     <View
