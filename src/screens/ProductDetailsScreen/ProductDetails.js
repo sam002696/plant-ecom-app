@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Image,
   SafeAreaView,
   ScrollView,
@@ -6,8 +7,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
-import { useNavigation } from "@react-navigation/native";
+import React, { useEffect } from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import {
   ArrowLeftIcon,
   HeartIcon,
@@ -16,9 +17,35 @@ import {
   ShoppingBagIcon,
   StarIcon,
 } from "react-native-heroicons/outline";
+import { useDispatch, useSelector } from "react-redux";
+import { UrlBuilder } from "../../helpers/UrlBuilder";
+import { callApi, selectApi } from "../../reducers/apiSlice";
 
 const ProductDetails = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+  const dispatch = useDispatch();
+  const { loading, plantInfo = { data: {} } } = useSelector(selectApi);
+
+  const { id } = route.params;
+
+  useEffect(() => {
+    dispatch(
+      callApi({
+        operationId: UrlBuilder.plantApiLocalhost(`plant/${id}`),
+        output: "plantInfo",
+        storeName: "plantInfo",
+      })
+    );
+  }, [dispatch, id]);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#01B763" />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView className="bg-white flex-1">
@@ -31,14 +58,14 @@ const ProductDetails = () => {
           </View>
           <Image
             className="w-[350px] h-[500px]"
-            source={require("../../../assets/images/plants/detailImage.png")}
+            source={{ uri: plantInfo?.data?.plantImageUrl }}
           />
         </View>
 
         <View className="flex-col space-y-4">
           <View className="flex-row justify-between items-center">
             <Text className="text-neutral-800 text-[32px] font-bold leading-[38.40px]">
-              Airtight Cactus
+              {plantInfo?.data?.plantName}
             </Text>
             <View>
               <HeartIcon size={30} color="#01B763" />
@@ -48,7 +75,7 @@ const ProductDetails = () => {
           <View className="flex-row space-x-5 items-center">
             <View className="px-2.5 py-1.5 bg-emerald-100  rounded-md justify-center items-center  ">
               <Text className="text-emerald-500 text-[10px] font-semibold  tracking-tight">
-                3.284 Sold
+                {plantInfo?.data?.sold} Sold
               </Text>
             </View>
 
@@ -56,7 +83,7 @@ const ProductDetails = () => {
               <StarIcon color="#01B763" fill="#01B763" />
             </Text>
             <Text className="text-neutral-700 text-sm font-medium  leading-tight tracking-tight">
-              4.9 (4.749 reviews)
+              {/* 4.9 (4.749 reviews) */}
             </Text>
           </View>
         </View>
@@ -74,9 +101,7 @@ const ProductDetails = () => {
             Description
           </Text>
           <Text className="text-neutral-700 text-sm font-normal leading-tight tracking-tight">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna. Lorem ipsum
-            dolor sit amet, consectetur adipiscing elit.
+            {plantInfo?.data?.plantDesc}
           </Text>
         </View>
 
@@ -90,7 +115,7 @@ const ProductDetails = () => {
           <View className="flex-row space-x-3 items-center bg-stone-50 shadow-sm px-3 py-2 rounded-3xl">
             <MinusIcon color="#01B763" />
             <Text className=" text-emerald-500 text-lg font-bold leading-snug">
-              2
+              {plantInfo?.data?.quantity}
             </Text>
             <PlusIcon color="#01B763" />
           </View>
@@ -109,7 +134,7 @@ const ProductDetails = () => {
               Total
             </Text>
             <Text className="text-neutral-800 text-2xl font-bold leading-[28.80px]">
-              $72
+              ${plantInfo?.data?.price}
             </Text>
           </View>
           <View className="w-72 p-3 rounded-3xl bg-emerald-500 shadow flex-row justify-center items-center space-x-3">

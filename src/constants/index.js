@@ -1,6 +1,6 @@
 export const categories = [
   {
-    name: "All",
+    name: "Indoor",
     image: "https://www.themealdb.com/images/category/starter.png",
   },
   {

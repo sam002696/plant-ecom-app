@@ -1,4 +1,5 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
+import { View, ActivityIndicator } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/AntDesign";
@@ -17,6 +18,7 @@ import EditProfile from "../screens/Profilescreen/EditProfile";
 import LoginScreen from "../components/Authentication/LoginScreen";
 import SignUpScreen from "../components/Authentication/SignUpScreen";
 import WelcomeScreen from "../components/Screens/WelcomeScreen";
+import { AuthUser } from "../helpers/AuthUser";
 
 // Screen names
 const homeName = "Home";
@@ -29,9 +31,39 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function AppNavigation() {
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userData = await AuthUser.getUser(); // Await for user data
+        setUser(userData); // Store user data in state
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [AuthUser]);
+
+  console.log("user :>> ", user?.accessToken);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#01B763" />
+      </View>
+    );
+  }
+
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Welcome">
+      <Stack.Navigator
+        initialRouteName={user?.accessToken ? "Main" : "Welcome"}
+      >
         <Stack.Screen
           name="Main"
           component={MainNavigator}

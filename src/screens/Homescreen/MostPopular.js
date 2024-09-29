@@ -1,11 +1,30 @@
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { categories } from "../../constants";
-import ProductCard from "../../components/Product/ProductCard";
 import SmallProductCard from "../../components/Product/SmallProductCard";
+import { callApi, selectApi } from "../../reducers/apiSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { UrlBuilder } from "../../helpers/UrlBuilder";
 
 const MostPopular = () => {
-  const [activeCategory, setActiveCategory] = useState(null);
+  const [activeCategory, setActiveCategory] = useState(categories[0].name);
+
+  const { loading, plantCategoryList = { data: {} } } = useSelector(selectApi);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(
+      callApi({
+        operationId: UrlBuilder.plantApiLocalhost(
+          `plant/category?category=${activeCategory}`
+        ),
+        output: "plantCategoryList",
+        storeName: "plantCategoryList",
+      })
+    );
+  }, [dispatch, activeCategory]);
+
   return (
     <View className="mt-5 pb-5">
       <View className="flex-row justify-between items-center">
@@ -50,7 +69,10 @@ const MostPopular = () => {
       </ScrollView>
 
       <View className="flex-row justify-between flex-wrap">
-        <SmallProductCard />
+        <SmallProductCard
+          plantList={plantCategoryList?.data}
+          loading={loading}
+        />
       </View>
     </View>
   );

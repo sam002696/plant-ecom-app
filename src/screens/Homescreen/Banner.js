@@ -3,7 +3,7 @@ import React from "react";
 import { BellIcon, HeartIcon } from "react-native-heroicons/outline";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 
-const Banner = () => {
+const Banner = ({ user }) => {
   return (
     <View className="flex-row justify-between items-center mb-2 mt-4">
       <View className="flex-row items-center space-x-3">
@@ -16,7 +16,7 @@ const Banner = () => {
             Good Morning 👋
           </Text>
           <Text className="text-neutral-800 text-xl font-bold leading-normal">
-            Andrew Ainsley
+            {user?.username}
           </Text>
         </View>
       </View>
