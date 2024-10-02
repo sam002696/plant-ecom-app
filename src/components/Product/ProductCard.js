@@ -25,7 +25,7 @@ const ProductCard = () => {
   return (
     <>
       {plantList?.data && plantList?.data.length > 0
-        ? plantList?.data.map((row, index) => (
+        ? plantList?.data.slice(0, 3).map((row, index) => (
             <View className="flex-row mb-4 px-2" key={index}>
               <Pressable
                 onPress={() =>

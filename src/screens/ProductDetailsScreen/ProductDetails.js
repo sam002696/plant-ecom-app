@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import {
   ArrowLeftIcon,
@@ -20,8 +20,10 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { UrlBuilder } from "../../helpers/UrlBuilder";
 import { callApi, selectApi } from "../../reducers/apiSlice";
+import { addToCart } from "../../reducers/cartSlice";
 
 const ProductDetails = () => {
+  const [quantity, setQuantity] = useState(1);
   const navigation = useNavigation();
   const route = useRoute();
   const dispatch = useDispatch();
@@ -39,6 +41,29 @@ const ProductDetails = () => {
     );
   }, [dispatch, id]);
 
+  const handleAddToCart = () => {
+    const price = plantInfo?.data.price;
+    dispatch(
+      addToCart({
+        id: plantInfo?.data?.id,
+        plantName: plantInfo?.data?.plantName,
+        plantImageUrl: plantInfo?.data?.plantImageUrl,
+        price: price * quantity,
+        quantity,
+      })
+    );
+  };
+
+  const handleIncreaseQuantity = () => {
+    setQuantity((prev) => prev + 1);
+  };
+
+  const handleDecreaseQuantity = () => {
+    if (quantity > 1) {
+      setQuantity((prev) => prev - 1);
+    }
+  };
+
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -51,13 +76,13 @@ const ProductDetails = () => {
     <SafeAreaView className="bg-white flex-1">
       <ScrollView showsVerticalScrollIndicator={false} className="mx-6">
         <View className="flex-row justify-start">
-          <View className="mt-8">
+          <View className="">
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <ArrowLeftIcon size={25} color="black" />
             </TouchableOpacity>
           </View>
           <Image
-            className="w-[350px] h-[500px]"
+            className="w-[350px] h-[500px] my-5 rounded-xl shadow-md"
             source={{ uri: plantInfo?.data?.plantImageUrl }}
           />
         </View>
@@ -113,11 +138,23 @@ const ProductDetails = () => {
             </Text>
           </View>
           <View className="flex-row space-x-3 items-center bg-stone-50 shadow-sm px-3 py-2 rounded-3xl">
-            <MinusIcon color="#01B763" />
+            <TouchableOpacity onPress={handleDecreaseQuantity}>
+              <MinusIcon color="#01B763" />
+            </TouchableOpacity>
             <Text className=" text-emerald-500 text-lg font-bold leading-snug">
-              {plantInfo?.data?.quantity}
+              {quantity}
             </Text>
-            <PlusIcon color="#01B763" />
+            <TouchableOpacity onPress={handleIncreaseQuantity}>
+              <PlusIcon color="#01B763" />
+            </TouchableOpacity>
+          </View>
+          <View className="bg-yellow-100 px-3 py-2 rounded-md shadow-sm">
+            <Text className="text-yellow-500 font-semibold">
+              {" "}
+              {plantInfo?.data?.quantity > 0
+                ? "In stock!"
+                : "Out of stock!"}{" "}
+            </Text>
           </View>
         </View>
         {/* Border */}
@@ -134,17 +171,20 @@ const ProductDetails = () => {
               Total
             </Text>
             <Text className="text-neutral-800 text-2xl font-bold leading-[28.80px]">
-              ${plantInfo?.data?.price}
+              ${plantInfo?.data?.price * quantity}
             </Text>
           </View>
-          <View className="w-72 p-3 rounded-3xl bg-emerald-500 shadow flex-row justify-center items-center space-x-3">
+          <TouchableOpacity
+            onPress={handleAddToCart}
+            className="w-72 p-3 rounded-3xl bg-emerald-500 shadow flex-row justify-center items-center space-x-3"
+          >
             <View className="">
               <ShoppingBagIcon color="white" height={30} width={30} />
             </View>
             <Text className=" text-white text-base font-bold  leading-snug tracking-tight">
               Add to Cart
             </Text>
-          </View>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>

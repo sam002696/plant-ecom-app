@@ -135,7 +135,7 @@ const MainNavigator = () => {
           return <Ionicons name={iconName} size={size} color={color} />;
         },
       })}
-      tabBarOptions={{
+      screenOption={{
         showLabel: true, // Hide labels
         activeTintColor: "#01B763",
         inactiveTintColor: "#9E9E9E",

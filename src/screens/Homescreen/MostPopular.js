@@ -46,7 +46,7 @@ const MostPopular = () => {
           let btnClass = isActive ? " bg-emerald-500 " : "bg-white";
           let textClass = isActive ? " text-white " : " text-emerald-500 ";
           return (
-            <View>
+            <View key={category.name}>
               <TouchableOpacity
                 onPress={() => setActiveCategory(category.name)}
                 className={
