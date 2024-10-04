@@ -38,15 +38,16 @@ export const cartSlice = createSlice({
       );
 
       if (existingProduct) {
+        // Update quantity and recalculate total price
         existingProduct.quantity += product.quantity;
-        // Recalculate price based on new quantity
         existingProduct.price =
-          (product.price / product.quantity) * existingProduct.quantity;
+          existingProduct.unitPrice * existingProduct.quantity;
       } else {
-        // Set the price based on quantity
+        // Add new product with a unitPrice and initial quantity
         state.items.push({
           ...product,
-          price: product.price, // Ensure price here is total price for the quantity
+          unitPrice: product.price, // Store the unit price separately
+          price: product.price * (product.quantity || 1), // Calculate initial total price
           quantity: product.quantity || 1,
         });
       }
@@ -58,6 +59,7 @@ export const cartSlice = createSlice({
 
       if (product) {
         product.quantity += 1;
+        product.price = product.unitPrice * product.quantity; // Recalculate price based on new quantity
         saveCartToStorage(state.items);
       }
     },
@@ -67,6 +69,7 @@ export const cartSlice = createSlice({
 
       if (product && product.quantity > 1) {
         product.quantity -= 1;
+        product.price = product.unitPrice * product.quantity; // Recalculate price based on new quantity
         saveCartToStorage(state.items);
       }
     },

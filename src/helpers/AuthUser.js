@@ -84,9 +84,14 @@ class AuthUserHelper {
   }
 
   async removeLoginData() {
-    await AsyncStorage.removeItem("access_token");
-    await AsyncStorage.removeItem("auth_user");
-    await AsyncStorage.removeItem("auth_roles");
+    try {
+      await AsyncStorage.removeItem("access_token");
+      await AsyncStorage.removeItem("auth_user");
+      await AsyncStorage.removeItem("auth_roles");
+      console.log("Access token removed");
+    } catch (error) {
+      console.log("Error removing access token: ", error);
+    }
   }
 }
 

@@ -60,7 +60,14 @@ export const apiSlice = createSlice({
   },
 });
 
-export const { callApi, succeed, failed, clearState, setState, setStatus } =
-  apiSlice.actions;
+export const {
+  callApi,
+  succeed,
+  failed,
+  clearState,
+  setState,
+  setStatus,
+  clearAuthState,
+} = apiSlice.actions;
 export const selectApi = (state) => state.api;
 export default apiSlice.reducer;

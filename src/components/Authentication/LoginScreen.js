@@ -14,9 +14,10 @@ import { ArrowLeftIcon } from "react-native-heroicons/outline";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { callApi, selectApi } from "../../reducers/apiSlice";
+import { callApi, clearState, selectApi } from "../../reducers/apiSlice";
 import { UrlBuilder } from "../../helpers/UrlBuilder";
 import { AuthUser } from "../../helpers/AuthUser";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginScreen = () => {
   const dispatch = useDispatch();
@@ -33,10 +34,16 @@ const LoginScreen = () => {
   useEffect(() => {
     const handleAuthData = async () => {
       // If the user logs in successfully (based on accessToken), save the login data
-      if (authData.data.accessToken) {
+      if (authData?.data?.accessToken) {
         try {
           await AuthUser.saveLoginData(authData); // Save data to AuthUser
           console.log("User data saved:", authData.data);
+          dispatch(
+            clearState({
+              output: "authData",
+            })
+          );
+          navigation.navigate("Main");
         } catch (error) {
           console.error("Error saving login data:", error);
         }
@@ -52,8 +59,6 @@ const LoginScreen = () => {
       .min(6, "Password should be at least 6 characters")
       .required("Password is required"),
   });
-
-  // Access user data anywhere in your app synchronously
 
   return (
     <View

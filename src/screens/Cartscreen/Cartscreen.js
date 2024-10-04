@@ -5,10 +5,10 @@ import {
   ScrollView,
   Image,
   Pressable,
+  TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import {
-  ArrowLongRightIcon,
   MagnifyingGlassIcon,
   MinusIcon,
   PlusIcon,
@@ -18,12 +18,19 @@ import { ModalContent } from "react-native-modals";
 import { BottomModal } from "react-native-modals";
 import { SlideAnimation } from "react-native-modals";
 import { useNavigation } from "@react-navigation/native";
-import { initializeCart, selectCart } from "../../reducers/cartSlice";
+import {
+  decreaseQuantity,
+  increaseQuantity,
+  initializeCart,
+  removeFromCart,
+  selectCart,
+} from "../../reducers/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const Cartscreen = () => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const dispatch = useDispatch();
   const { items } = useSelector(selectCart);
@@ -31,6 +38,24 @@ const Cartscreen = () => {
   useEffect(() => {
     dispatch(initializeCart());
   }, [dispatch]);
+
+  const handleRemovePress = (item) => {
+    setSelectedItem(item);
+    setModalVisible(true);
+  };
+
+  const handleItemRemoval = (item) => {
+    dispatch(removeFromCart(item.id));
+    setModalVisible(false);
+  };
+
+  const handleIncreaseQuantity = (itemId) => {
+    dispatch(increaseQuantity(itemId));
+  };
+
+  const handleDecreaseQuantity = (itemId) => {
+    dispatch(decreaseQuantity(itemId));
+  };
 
   console.log("items", items);
   return (
@@ -78,14 +103,22 @@ const Cartscreen = () => {
                     </Text>
                     <View className="flex-row items-center justify-between  w-48 mt-1">
                       <View className="flex-row space-x-3 items-center bg-stone-50 shadow-sm px-3 py-1 rounded-3xl">
-                        <MinusIcon color="#01B763" />
+                        <TouchableOpacity
+                          onPress={() => handleDecreaseQuantity(row.id)}
+                        >
+                          <MinusIcon color="#01B763" />
+                        </TouchableOpacity>
                         <Text className=" text-emerald-500 text-sm font-bold leading-snug">
                           {row.quantity}
                         </Text>
-                        <PlusIcon color="#01B763" />
+                        <TouchableOpacity
+                          onPress={() => handleIncreaseQuantity(row.id)}
+                        >
+                          <PlusIcon color="#01B763" />
+                        </TouchableOpacity>
                       </View>
 
-                      <Pressable onPress={() => setModalVisible(!modalVisible)}>
+                      <Pressable onPress={() => handleRemovePress(row)}>
                         <TrashIcon color="red" />
                       </Pressable>
                     </View>
@@ -110,68 +143,71 @@ const Cartscreen = () => {
         onTouchOutside={() => setModalVisible(!modalVisible)}
       >
         <ModalContent style={{ width: "100%", height: 400 }}>
-          <View style={{ marginBottom: 8 }}>
-            <Text className="text-center text-neutral-800 text-2xl font-bold leading-[28.80px]">
-              Remove from Cart?
-            </Text>
-          </View>
-
-          {/* Border */}
-
-          <View className="w-[380px] h-[0px] justify-center items-center inline-flex mt-4">
-            <View className="w-[380px] h-[0px] border border-zinc-100"></View>
-          </View>
-
-          {/* Product */}
-
-          <View className=" rounded-[32px] my-2 bg-white shadow-sm mx-3 mt-10">
-            <View className="flex-row items-center space-x-2">
-              <View>
-                <View className=" rounded-[32px] m-4 bg-gray-50">
-                  <Image
-                    className="w-32 h-32 rounded-full "
-                    source={require("../../../assets/images/plants/plant1.png")}
-                  />
-                </View>
+          {selectedItem && (
+            <>
+              <View style={{ marginBottom: 8 }}>
+                <Text className="text-center text-neutral-800 text-2xl font-bold leading-[28.80px]">
+                  Remove{" "}
+                  <Text className="text-green-600">
+                    {selectedItem.plantName}
+                  </Text>{" "}
+                  from Cart?
+                </Text>
               </View>
-              <View>
-                <Text className=" text-neutral-800 text-lg font-bold leading-snug">
-                  Prayer Plant
-                </Text>
-                <Text className=" text-emerald-500 text-lg font-bold  leading-snug">
-                  $29
-                </Text>
-                <View className="flex-row items-center justify-between  w-48 mt-1">
-                  <View className="flex-row space-x-3 items-center bg-stone-50 shadow-sm px-3 py-1 rounded-3xl">
-                    <MinusIcon color="#01B763" />
-                    <Text className=" text-emerald-500 text-sm font-bold leading-snug">
-                      2
+
+              {/* Border */}
+              <View className="w-[380px] h-[0px] justify-center items-center inline-flex mt-4">
+                <View className="w-[380px] h-[0px] border border-zinc-100"></View>
+              </View>
+
+              {/* Product in Modal */}
+              <View className="rounded-[32px] my-2 bg-white shadow-sm mx-3 mt-10">
+                <View className="flex-row items-center space-x-2">
+                  <View>
+                    <View className="rounded-[32px] m-4 bg-gray-50">
+                      <Image
+                        className="w-32 h-32 rounded-[32px]"
+                        source={{ uri: selectedItem.plantImageUrl }}
+                      />
+                    </View>
+                  </View>
+                  <View>
+                    <Text className="text-neutral-800 text-lg font-bold leading-snug">
+                      {selectedItem.plantName}
                     </Text>
-                    <PlusIcon color="#01B763" />
+                    <Text className="text-emerald-500 text-lg font-bold leading-snug">
+                      ${selectedItem.price}
+                    </Text>
                   </View>
                 </View>
               </View>
-            </View>
-          </View>
 
-          {/* Border */}
+              {/* Border */}
+              <View className="w-[380px] h-[0px] justify-center items-center inline-flex mt-4">
+                <View className="w-[380px] h-[0px] border border-zinc-100"></View>
+              </View>
 
-          <View className="w-[380px] h-[0px] justify-center items-center inline-flex mt-4">
-            <View className="w-[380px] h-[0px] border border-zinc-100"></View>
-          </View>
-
-          <View className="flex-row justify-between  items-center mt-5">
-            <View className=" w-[184px] px-5 py-3 rounded-3xl bg-emerald-50 shadow  space-x-3">
-              <Text className="text-emerald-500 text-base font-bold  text-center leading-snug tracking-tight">
-                Cancel
-              </Text>
-            </View>
-            <View className=" w-[184px] px-5 py-3 rounded-3xl bg-emerald-50 shadow  space-x-3   group-hover:bg-emerald-500 group-hover:text-white">
-              <Text className="text-emerald-500 text-base font-bold  text-center leading-snug tracking-tight">
-                Yes, Remove
-              </Text>
-            </View>
-          </View>
+              {/* Buttons */}
+              <View className="flex-row justify-between items-center mt-5">
+                <View className="w-[184px] px-5 py-3 rounded-3xl bg-emerald-50 shadow space-x-3">
+                  <TouchableOpacity onPress={() => setModalVisible(false)}>
+                    <Text className="text-emerald-500 text-base font-bold text-center leading-snug tracking-tight">
+                      Cancel
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View className="w-[184px] px-5 py-3 rounded-3xl bg-red-50 shadow space-x-3">
+                  <TouchableOpacity
+                    onPress={() => handleItemRemoval(selectedItem)}
+                  >
+                    <Text className="text-red-500 text-base font-bold text-center leading-snug tracking-tight">
+                      Yes, Remove
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </>
+          )}
         </ModalContent>
       </BottomModal>
     </SafeAreaView>
