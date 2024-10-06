@@ -19,6 +19,8 @@ import LoginScreen from "../components/Authentication/LoginScreen";
 import SignUpScreen from "../components/Authentication/SignUpScreen";
 import WelcomeScreen from "../components/Screens/WelcomeScreen";
 import { AuthUser } from "../helpers/AuthUser";
+import ShippingTypeScreen from "../screens/ShippingTypeScreen/ShippingTypeScreen";
+import ShippingAddressScreen from "../screens/ShippingAddressScreen/ShippingAddressScreen";
 
 // Screen names
 const homeName = "Home";
@@ -102,6 +104,16 @@ function AppNavigation() {
         <Stack.Screen
           name="EditProfile"
           component={EditProfile}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ShippingType"
+          component={ShippingTypeScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ShippingAddress"
+          component={ShippingAddressScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

@@ -129,6 +129,34 @@ const Cartscreen = () => {
           : ""}
       </ScrollView>
 
+      <View
+        className="bg-white px-8 py-3 shadow-md"
+        style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          borderTopLeftRadius: 50,
+          borderTopRightRadius: 50,
+          paddingBottom: 20, // Optional: padding for spacing
+        }}
+      >
+        <View className="flex flex-row items-center justify-between">
+          <View>
+            <Text className="text-gray-500 text-sm">Total Price:</Text>
+            <Text className=" font-bold text-2xl">$250</Text>
+          </View>
+          <View>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Checkout")}
+              className="px-10 py-4 bg-green-500 rounded-full"
+            >
+              <Text className="text-white font-bold">Checkout</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+
       <BottomModal
         onBackdropPress={() => setModalVisible(!modalVisible)}
         swipeDirection={["up", "down"]}

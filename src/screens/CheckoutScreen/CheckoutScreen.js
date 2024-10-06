@@ -7,7 +7,7 @@ import {
   TextInput,
   Pressable,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import {
@@ -16,16 +16,22 @@ import {
   ChevronRightIcon,
   EllipsisHorizontalCircleIcon,
   MapPinIcon,
-  MinusIcon,
   PencilSquareIcon,
   PlusCircleIcon,
-  PlusIcon,
-  TrashIcon,
   TruckIcon,
 } from "react-native-heroicons/outline";
+import { useDispatch, useSelector } from "react-redux";
+import { initializeCart, selectCart } from "../../reducers/cartSlice";
 
 const CheckoutScreen = () => {
   const navigation = useNavigation();
+
+  const dispatch = useDispatch();
+  const { items } = useSelector(selectCart);
+
+  useEffect(() => {
+    dispatch(initializeCart());
+  }, [dispatch]);
   return (
     <SafeAreaView className=" flex-1 bg-gray-50 ">
       <ScrollView showsVerticalScrollIndicator={false} className="">
@@ -60,22 +66,24 @@ const CheckoutScreen = () => {
         {/* Shipping Addresses */}
 
         <View className=" mt-5 p-5 rounded-3xl bg-white shadow-md mx-6">
-          <View className="flex-row justify-between items-center">
-            <View className="flex-row items-center space-x-3">
-              <MapPinIcon size={25} color="green" />
+          <Pressable onPress={() => navigation.navigate("ShippingAddress")}>
+            <View className="flex-row justify-between items-center">
+              <View className="flex-row items-center space-x-3">
+                <MapPinIcon size={25} color="green" />
+                <View>
+                  <Text className="text-neutral-800 text-lg font-bold leading-snug">
+                    Home
+                  </Text>
+                  <Text className="text-zinc-600 text-sm font-medium  leading-tight tracking-tight">
+                    61480 Sunbrook Park, PC 5679
+                  </Text>
+                </View>
+              </View>
               <View>
-                <Text className="text-neutral-800 text-lg font-bold leading-snug">
-                  Home
-                </Text>
-                <Text className="text-zinc-600 text-sm font-medium  leading-tight tracking-tight">
-                  61480 Sunbrook Park, PC 5679
-                </Text>
+                <PencilSquareIcon size={25} color="green" />
               </View>
             </View>
-            <View>
-              <PencilSquareIcon size={25} color="green" />
-            </View>
-          </View>
+          </Pressable>
         </View>
 
         {/* Border */}
@@ -94,106 +102,40 @@ const CheckoutScreen = () => {
 
         {/* Orders */}
 
-        <View className=" rounded-[32px] my-2 bg-white shadow-sm mx-3 mt-5">
-          <View className="flex-row items-center space-x-2">
-            <View>
-              <View className=" rounded-[32px] m-4 bg-gray-50">
-                <Image
-                  className="w-32 h-32 rounded-full "
-                  source={require("../../../assets/images/plants/plant1.png")}
-                />
-              </View>
-            </View>
-            <View>
-              <Text className=" text-neutral-800 text-lg font-bold leading-snug">
-                Prayer Plant
-              </Text>
-              <Text className=" text-emerald-500 text-lg font-bold  leading-snug">
-                $29
-              </Text>
-              <View className="flex-row items-center justify-between  w-48 mt-1">
-                <View className="flex-row space-x-3 items-center bg-stone-50 shadow-sm px-3 py-1 rounded-3xl">
-                  <MinusIcon color="#01B763" />
-                  <Text className=" text-emerald-500 text-sm font-bold leading-snug">
-                    2
-                  </Text>
-                  <PlusIcon color="#01B763" />
-                </View>
-                <View>
-                  <TrashIcon color="red" />
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
-
-        <View className=" rounded-[32px] my-2 bg-white shadow-sm mx-3">
-          <View className="flex-row items-center space-x-2">
-            <View>
-              <View className=" rounded-[32px] m-4 bg-gray-50">
-                <Image
-                  className="w-32 h-32 rounded-full "
-                  source={require("../../../assets/images/plants/plant2.png")}
-                />
-              </View>
-            </View>
-            <View>
-              <Text className=" text-neutral-800 text-lg font-bold leading-snug">
-                Rubber Fig Plant
-              </Text>
-              <Text className=" text-emerald-500 text-lg font-bold  leading-snug">
-                $99
-              </Text>
-              <View className="flex-row items-center justify-between  w-48 mt-1">
-                <View className="flex-row space-x-3 items-center bg-stone-50 shadow-sm px-3 py-1 rounded-3xl">
-                  <MinusIcon color="#01B763" />
-                  <Text className=" text-emerald-500 text-sm font-bold leading-snug">
-                    2
-                  </Text>
-                  <PlusIcon color="#01B763" />
-                </View>
-
-                <View>
-                  <TrashIcon color="red" />
+        {items && items.length > 0
+          ? items.map((row, index) => (
+              <View
+                key={row.id}
+                className=" rounded-[32px] my-2 bg-white shadow-sm mx-3"
+              >
+                <View className="flex-row items-center space-x-2">
+                  <View>
+                    <View className=" rounded-[32px] m-4 bg-gray-50">
+                      <Image
+                        className="w-32 h-32 rounded-[32px] "
+                        source={{ uri: row.plantImageUrl }}
+                      />
+                    </View>
+                  </View>
+                  <View className="space-y-2">
+                    <Text className=" text-neutral-800 text-lg font-bold leading-snug">
+                      {row.plantName}
+                    </Text>
+                    <Text className=" text-emerald-500 text-lg font-bold  leading-snug">
+                      ${row.price}
+                    </Text>
+                    <View className="flex-row items-center justify-between  w-48 mt-1">
+                      <View className="flex-row space-x-3 items-center bg-stone-50 shadow-sm px-3 py-1 rounded-3xl">
+                        <Text className=" text-emerald-500 text-sm font-bold leading-snug">
+                          {row.quantity}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
                 </View>
               </View>
-            </View>
-          </View>
-        </View>
-
-        <View className=" rounded-[32px] my-2 bg-white shadow-sm mx-3">
-          <View className="flex-row items-center space-x-2">
-            <View>
-              <View className=" rounded-[32px] m-4 bg-gray-50">
-                <Image
-                  className="w-32 h-32 rounded-full "
-                  source={require("../../../assets/images/plants/plant3.png")}
-                />
-              </View>
-            </View>
-            <View>
-              <Text className=" text-neutral-800 text-lg font-bold leading-snug">
-                ZZ Plant
-              </Text>
-              <Text className=" text-emerald-500 text-lg font-bold  leading-snug">
-                $99
-              </Text>
-              <View className="flex-row items-center justify-between  w-48 mt-1">
-                <View className="flex-row space-x-3 items-center bg-stone-50 shadow-sm px-3 py-1 rounded-3xl">
-                  <MinusIcon color="#01B763" />
-                  <Text className=" text-emerald-500 text-sm font-bold leading-snug">
-                    2
-                  </Text>
-                  <PlusIcon color="#01B763" />
-                </View>
-
-                <View>
-                  <TrashIcon color="red" />
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
+            ))
+          : ""}
 
         {/* Border */}
 
@@ -210,19 +152,20 @@ const CheckoutScreen = () => {
         </View>
 
         <View className=" mt-5 p-5 rounded-3xl bg-white shadow-md mx-6">
-          <View className="flex-row justify-between items-center">
-            <View className="flex-row items-center space-x-3">
-              <TruckIcon size={25} color="green" />
-              <View>
+          <Pressable onPress={() => navigation.navigate("ShippingType")}>
+            <View className="flex-row justify-between items-center">
+              <View className="flex-row items-center space-x-3">
+                <TruckIcon size={25} color="green" />
+
                 <Text className="text-neutral-800 text-lg font-bold leading-snug">
                   Choose Shipping Type
                 </Text>
               </View>
+              <View>
+                <ChevronRightIcon size={25} color="green" />
+              </View>
             </View>
-            <View>
-              <ChevronRightIcon size={25} color="green" />
-            </View>
-          </View>
+          </Pressable>
         </View>
 
         {/* Promo Code */}
