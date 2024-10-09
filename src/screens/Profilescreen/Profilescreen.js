@@ -21,20 +21,6 @@ const Profilescreen = () => {
 
   const handleLogout = async () => {
     await AuthUser.removeLoginData();
-    console.log("Removing login data");
-
-    const tokenBefore = await AsyncStorage.getItem("access_token");
-    console.log("Token before manual removal:", tokenBefore);
-
-    await AsyncStorage.removeItem("access_token");
-
-    const tokenAfter = await AsyncStorage.getItem("access_token");
-    console.log("Token after manual removal:", tokenAfter);
-
-    if (!tokenAfter) {
-      console.log("Token successfully removed, navigating to Welcome screen");
-      navigation.navigate("Welcome");
-    }
   };
 
   return (

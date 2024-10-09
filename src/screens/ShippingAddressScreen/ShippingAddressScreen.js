@@ -32,27 +32,30 @@ const CustomRadioButton = ({ selected, onPress }) => {
   );
 };
 
-const shippingOptions = [
+const shippingAddress = [
   {
-    id: "economy",
-    name: "Economy",
-    price: "$10",
-    estimatedArrival: "Dec 20-23",
-    image: require("../../../assets/images/shipping/shipping_econ.png"),
+    id: "home",
+    name: "Home",
+    address: "61480 Sunbrook Park",
+    zipCode: "PC 5679",
+
+    image: require("../../../assets/images/shipping/locationIcon.png"),
   },
   {
-    id: "regular",
-    name: "Regular",
-    price: "$15",
-    estimatedArrival: "Dec 18-20",
-    image: require("../../../assets/images/shipping/shipping_regular.png"),
+    id: "office",
+    name: "Office",
+    address: "6993 Meadow Valley Terra",
+    zipCode: "PC 3637",
+
+    image: require("../../../assets/images/shipping/locationIcon.png"),
   },
   {
-    id: "cargo",
-    name: "Cargo",
-    price: "$20",
-    estimatedArrival: "Dec 17-19",
-    image: require("../../../assets/images/shipping/shipping_cargo.png"),
+    id: "apartment",
+    name: "Apartment",
+    address: "21833 Clyde Gallagher",
+    zipCode: "PC 4662",
+
+    image: require("../../../assets/images/shipping/locationIcon.png"),
   },
 ];
 
@@ -97,7 +100,7 @@ const ShippingAddressScreen = () => {
         >
           {({ values, handleSubmit, setFieldValue, errors, touched }) => (
             <>
-              {shippingOptions.map((option) => (
+              {shippingAddress.map((option) => (
                 <View
                   key={option.id}
                   className="mt-5 p-5 rounded-3xl bg-white shadow-sm mx-6"
@@ -113,16 +116,12 @@ const ShippingAddressScreen = () => {
                           {option.name}
                         </Text>
                         <Text className="text-zinc-600 text-sm font-medium leading-tight tracking-tight">
-                          Estimated Arrival, {option.estimatedArrival}
+                          {option.address}, {option.zipCode}
                         </Text>
                       </View>
                     </View>
 
                     <View className="flex flex-row items-center">
-                      <Text className="text-lg font-bold text-green-500 mr-2">
-                        {option.price}
-                      </Text>
-
                       {/* Custom Radio Button */}
                       <CustomRadioButton
                         selected={values.shippingOption === option.id}
@@ -142,13 +141,13 @@ const ShippingAddressScreen = () => {
                 </Text>
               ) : null}
 
-              {/* Apply Button */}
+              {/* Add new address Button */}
               <TouchableOpacity
                 onPress={handleSubmit}
                 className="mt-8 p-4 bg-green-500 mx-6 rounded-xl"
               >
                 <Text className="text-white text-lg font-bold text-center">
-                  Apply
+                  Add new address
                 </Text>
               </TouchableOpacity>
             </>

@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { navigate } from "../service/NavigationService";
 
 class AuthUserHelper {
   async getUser() {
@@ -88,9 +89,16 @@ class AuthUserHelper {
       await AsyncStorage.removeItem("access_token");
       await AsyncStorage.removeItem("auth_user");
       await AsyncStorage.removeItem("auth_roles");
-      console.log("Access token removed");
+      console.log("Access token and user data removed");
+
+      // Check if the token is removed and navigate accordingly
+      const tokenAfter = await AsyncStorage.getItem("access_token");
+      if (!tokenAfter) {
+        console.log("Token successfully removed, navigating to Welcome screen");
+        navigate("Welcome");
+      }
     } catch (error) {
-      console.log("Error removing access token: ", error);
+      console.log("Error removing login data: ", error);
     }
   }
 }

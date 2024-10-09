@@ -21,6 +21,7 @@ import WelcomeScreen from "../components/Screens/WelcomeScreen";
 import { AuthUser } from "../helpers/AuthUser";
 import ShippingTypeScreen from "../screens/ShippingTypeScreen/ShippingTypeScreen";
 import ShippingAddressScreen from "../screens/ShippingAddressScreen/ShippingAddressScreen";
+import { navigationRef } from "../service/NavigationService";
 
 // Screen names
 const homeName = "Home";
@@ -62,7 +63,7 @@ function AppNavigation() {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator
         initialRouteName={user?.accessToken ? "Main" : "Welcome"}
       >
