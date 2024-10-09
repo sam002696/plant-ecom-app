@@ -31,6 +31,7 @@ const Cartscreen = () => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [totalPrice, setTotalPrice] = useState(0);
 
   const dispatch = useDispatch();
   const { items } = useSelector(selectCart);
@@ -56,6 +57,12 @@ const Cartscreen = () => {
   const handleDecreaseQuantity = (itemId) => {
     dispatch(decreaseQuantity(itemId));
   };
+
+  useEffect(() => {
+    // Calculate total price whenever cart items change
+    const total = items.reduce((sum, item) => sum + item.price, 0);
+    setTotalPrice(total);
+  }, [items]);
 
   console.log("items", items);
   return (
@@ -144,7 +151,7 @@ const Cartscreen = () => {
         <View className="flex flex-row items-center justify-between">
           <View>
             <Text className="text-gray-500 text-sm">Total Price:</Text>
-            <Text className=" font-bold text-2xl">$250</Text>
+            <Text className=" font-bold text-2xl">${totalPrice}</Text>
           </View>
           <View>
             <TouchableOpacity

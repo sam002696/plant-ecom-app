@@ -7,9 +7,9 @@ import {
   TextInput,
   Pressable,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import {
   ArrowLeftIcon,
   ArrowLongRightIcon,
@@ -17,14 +17,17 @@ import {
   EllipsisHorizontalCircleIcon,
   MapPinIcon,
   PencilSquareIcon,
-  PlusCircleIcon,
   TruckIcon,
 } from "react-native-heroicons/outline";
 import { useDispatch, useSelector } from "react-redux";
 import { initializeCart, selectCart } from "../../reducers/cartSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ShippingType } from "../../utilities/ShippingType";
 
 const CheckoutScreen = () => {
   const navigation = useNavigation();
+
+  const [shippingType, setShippingType] = useState();
 
   const dispatch = useDispatch();
   const { items } = useSelector(selectCart);
@@ -32,6 +35,25 @@ const CheckoutScreen = () => {
   useEffect(() => {
     dispatch(initializeCart());
   }, [dispatch]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const getSelectedShippingOption = async () => {
+        try {
+          const option = await AsyncStorage.getItem("selectedShippingOption");
+          if (option !== null) {
+            setShippingType(ShippingType(option));
+          }
+        } catch (error) {
+          console.error("Error retrieving shipping option", error);
+        }
+      };
+      getSelectedShippingOption();
+    }, [])
+  );
+
+  // console.log("shippingType", shippingType);
+
   return (
     <SafeAreaView className=" flex-1 bg-gray-50 ">
       <ScrollView showsVerticalScrollIndicator={false} className="">
@@ -154,15 +176,35 @@ const CheckoutScreen = () => {
         <View className=" mt-5 p-5 rounded-3xl bg-white shadow-md mx-6">
           <Pressable onPress={() => navigation.navigate("ShippingType")}>
             <View className="flex-row justify-between items-center">
-              <View className="flex-row items-center space-x-3">
+              <View className="flex flex-row items-center">
                 <TruckIcon size={25} color="green" />
 
-                <Text className="text-neutral-800 text-lg font-bold leading-snug">
-                  Choose Shipping Type
-                </Text>
+                {shippingType ? (
+                  <>
+                    <View className="ml-3">
+                      <Text className="text-neutral-800 text-lg font-bold leading-snug">
+                        {shippingType.name}
+                      </Text>
+                      <Text className="text-zinc-600 text-sm font-medium leading-tight tracking-tight">
+                        Estimated Arrival, {shippingType.estimatedArrival}
+                      </Text>
+                    </View>
+                  </>
+                ) : (
+                  <>
+                    <Text className="text-neutral-800 text-lg font-bold leading-snug">
+                      Choose Shipping Type
+                    </Text>
+                  </>
+                )}
               </View>
-              <View>
-                <ChevronRightIcon size={25} color="green" />
+              <View className="flex flex-row items-center">
+                <Text className="text-lg font-bold text-green-500 mr-2">
+                  ${shippingType?.price}
+                </Text>
+                <View>
+                  <ChevronRightIcon size={25} color="green" />
+                </View>
               </View>
             </View>
           </Pressable>
@@ -170,7 +212,7 @@ const CheckoutScreen = () => {
 
         {/* Promo Code */}
 
-        <View className="mt-5 mx-6">
+        {/* <View className="mt-5 mx-6">
           <Text className=" text-neutral-800 text-xl font-bold leading-normal">
             Promo Code
           </Text>
@@ -187,7 +229,7 @@ const CheckoutScreen = () => {
           <View className="mt-4">
             <PlusCircleIcon size={45} color="green" />
           </View>
-        </View>
+        </View> */}
 
         {/* Bill */}
 
@@ -203,9 +245,9 @@ const CheckoutScreen = () => {
             </View>
             <View className="space-y-3">
               <Text className=" text-right text-neutral-700 text-base font-semibold  leading-snug tracking-tight">
-                $250
+                ${items.reduce((sum, item) => sum + item?.price, 0)}
               </Text>
-              <Text>-</Text>
+              <Text className="text-end">${shippingType?.price}</Text>
             </View>
           </View>
 
@@ -220,7 +262,11 @@ const CheckoutScreen = () => {
               </Text>
             </View>
             <View className="">
-              <Text>-</Text>
+              <Text>
+                $
+                {items.reduce((sum, item) => sum + item?.price, 0) +
+                  shippingType?.price}
+              </Text>
             </View>
           </View>
         </View>
