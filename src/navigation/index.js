@@ -10,7 +10,7 @@ import Homescreen from "../screens/Homescreen/Homescreen";
 import ProfileScreen from "../screens/Profilescreen/Profilescreen";
 import Cartscreen from "../screens/Cartscreen/Cartscreen";
 import Orderscreen from "../screens/Orderscreen/Orderscreen";
-import Walletscreen from "../screens/Walletscreen/Walletscreen";
+// import Walletscreen from "../screens/Walletscreen/Walletscreen";
 import ProductDetailsscreen from "../screens/ProductDetailsScreen/ProductDetails";
 import CheckoutScreen from "../screens/CheckoutScreen/CheckoutScreen";
 import TrackOrder from "../screens/TrackOrderScreen/TrackOrder";
@@ -138,9 +138,11 @@ const MainNavigator = () => {
             iconName = focused ? "cloudo" : "cloudo";
           } else if (rn === orderName) {
             iconName = focused ? "shoppingcart" : "shoppingcart";
-          } else if (rn === walletName) {
-            iconName = focused ? "wallet" : "wallet";
-          } else if (rn === profileName) {
+          }
+          // else if (rn === walletName) {
+          //   iconName = focused ? "wallet" : "wallet";
+          // }
+          else if (rn === profileName) {
             iconName = focused ? "user" : "user";
           }
 
@@ -158,7 +160,7 @@ const MainNavigator = () => {
       <Tab.Screen name={homeName} component={Homescreen} />
       <Tab.Screen name={cartName} component={Cartscreen} />
       <Tab.Screen name={orderName} component={Orderscreen} />
-      <Tab.Screen name={walletName} component={Walletscreen} />
+      {/* <Tab.Screen name={walletName} component={Walletscreen} /> */}
       <Tab.Screen name={profileName} component={ProfileScreen} />
     </Tab.Navigator>
   );

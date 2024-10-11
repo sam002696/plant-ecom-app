@@ -4,7 +4,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
-  TextInput,
   Pressable,
 } from "react-native";
 import React, { useEffect, useState } from "react";
@@ -28,6 +27,7 @@ const CheckoutScreen = () => {
   const navigation = useNavigation();
 
   const [shippingType, setShippingType] = useState();
+  const [shippingAddress, setShippingAddress] = useState();
 
   const dispatch = useDispatch();
   const { items } = useSelector(selectCart);
@@ -52,7 +52,21 @@ const CheckoutScreen = () => {
     }, [])
   );
 
-  // console.log("shippingType", shippingType);
+  useFocusEffect(
+    React.useCallback(() => {
+      const getSelectedShippingAddress = async () => {
+        try {
+          const option = await AsyncStorage.getItem("selectedShippingAddress");
+          if (option !== null) {
+            setShippingAddress(option ? JSON.parse(option) : null);
+          }
+        } catch (error) {
+          console.error("Error retrieving shipping option", error);
+        }
+      };
+      getSelectedShippingAddress();
+    }, [])
+  );
 
   return (
     <SafeAreaView className=" flex-1 bg-gray-50 ">
@@ -94,10 +108,10 @@ const CheckoutScreen = () => {
                 <MapPinIcon size={25} color="green" />
                 <View>
                   <Text className="text-neutral-800 text-lg font-bold leading-snug">
-                    Home
+                    {shippingAddress?.addressType}
                   </Text>
                   <Text className="text-zinc-600 text-sm font-medium  leading-tight tracking-tight">
-                    61480 Sunbrook Park, PC 5679
+                    {shippingAddress?.streetAddress}, {shippingAddress?.zipcode}
                   </Text>
                 </View>
               </View>
