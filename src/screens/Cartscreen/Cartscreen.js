@@ -64,7 +64,6 @@ const Cartscreen = () => {
     setTotalPrice(total);
   }, [items]);
 
-  console.log("items", items);
   return (
     <SafeAreaView className="bg-gray-50 flex-1">
       <ScrollView showsVerticalScrollIndicator={false} className="mt-5">

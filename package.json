@@ -19,6 +19,7 @@
     "@react-navigation/native-stack": "^6.9.14",
     "@reduxjs/toolkit": "^2.2.7",
     "expo": "~49.0.13",
+    "expo-blur": "^13.0.2",
     "expo-status-bar": "~1.6.0",
     "formik": "^2.4.6",
     "nativewind": "^2.0.11",

@@ -22,12 +22,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { initializeCart, selectCart } from "../../reducers/cartSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ShippingType } from "../../utilities/ShippingType";
+import { callApi, selectApi } from "../../reducers/apiSlice";
+import { UrlBuilder } from "../../helpers/UrlBuilder";
+import OrderSuccessModal from "./OrderSuccessModal";
 
 const CheckoutScreen = () => {
+  const {
+    orderPlace = {
+      data: {},
+    },
+  } = useSelector(selectApi);
   const navigation = useNavigation();
 
   const [shippingType, setShippingType] = useState();
   const [shippingAddress, setShippingAddress] = useState();
+  const [isModalVisible, setModalVisible] = useState(true);
 
   const dispatch = useDispatch();
   const { items } = useSelector(selectCart);
@@ -67,6 +76,44 @@ const CheckoutScreen = () => {
       getSelectedShippingAddress();
     }, [])
   );
+
+  const handlePlaceOrder = () => {
+    const itemsToSend = items.map((item) => ({
+      plantId: item.id,
+      quantity: item.quantity,
+    }));
+
+    const addressId = shippingAddress?.id;
+
+    const selectedShippingType = shippingType?.name;
+
+    const totalAmount =
+      items.reduce((sum, item) => sum + item?.price, 0) + shippingType?.price;
+
+    const requestBody = {
+      items: itemsToSend,
+      addressId: addressId,
+      shippingType: selectedShippingType,
+      totalAmount: totalAmount,
+    };
+
+    dispatch(
+      callApi({
+        operationId: UrlBuilder.plantApiLocalhost("order/place"),
+        output: "orderPlace",
+        parameters: {
+          method: "POST",
+          body: JSON.stringify(requestBody),
+        },
+      })
+    );
+  };
+
+  useEffect(() => {
+    if (orderPlace?.status === "success") {
+      setModalVisible(true);
+    }
+  }, [orderPlace?.status]);
 
   return (
     <SafeAreaView className=" flex-1 bg-gray-50 ">
@@ -288,18 +335,25 @@ const CheckoutScreen = () => {
         {/* Continue to Payment Button */}
 
         <View className="w-[380px] mx-auto my-6">
-          <Pressable
-            // onPress={() => navigation.navigate("Checkout")}
+          <TouchableOpacity
+            onPress={() => handlePlaceOrder()}
             className=" p-3 rounded-3xl bg-emerald-500 shadow flex-row justify-center items-center space-x-3"
           >
             <Text className=" text-white text-base font-bold  leading-snug tracking-tight">
-              Continue to Payment
+              Place the order
             </Text>
             <View className="">
               <ArrowLongRightIcon color="white" height={30} width={30} />
             </View>
-          </Pressable>
+          </TouchableOpacity>
         </View>
+
+        <OrderSuccessModal
+          isVisible={isModalVisible}
+          onClose={() => {
+            setModalVisible(false);
+          }}
+        />
       </ScrollView>
     </SafeAreaView>
   );
