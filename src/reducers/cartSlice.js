@@ -47,8 +47,8 @@ export const cartSlice = createSlice({
         state.items.push({
           ...product,
           unitPrice: product.price, // Store the unit price separately
-          price: product.price * (product.quantity || 1), // Calculate initial total price
-          quantity: product.quantity || 1,
+          price: product.price * product.quantity, // Calculate initial total price
+          quantity: product.quantity,
         });
       }
       saveCartToStorage(state.items);

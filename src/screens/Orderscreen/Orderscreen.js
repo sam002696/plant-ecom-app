@@ -4,7 +4,6 @@ import {
   SafeAreaView,
   ScrollView,
   Image,
-  FlatList,
   TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
@@ -16,16 +15,14 @@ import ActiveOrders from "./ActiveOrders";
 
 const Orderscreen = () => {
   const orderTypes = ["Active", "Completed"];
-  const [orderType, seOrderType] = useState("Active");
+  const [orderType, setOrderType] = useState("Active");
 
   const displayTabContent = () => {
     switch (orderType) {
       case "Active":
         return <ActiveOrders />;
-
       case "Completed":
-      // return <PartTime />;
-
+        return null; // Add your CompletedOrders component here
       default:
         return null;
     }
@@ -33,9 +30,9 @@ const Orderscreen = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
-      <ScrollView showsVerticalScrollIndicator={false} className="">
+      <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header Section */}
-        <View className="flex-row  justify-between items-center mx-3 mt-8">
+        <View className="flex-row justify-between items-center mx-3 mt-8">
           <View className="flex-row space-x-2 items-center">
             <Image
               className="w-8 h-8 rounded-full"
@@ -52,37 +49,32 @@ const Orderscreen = () => {
         </View>
 
         {/* Tabs Display Start */}
-        <View className="p-5 flex-row justify-between">
-          <FlatList
-            data={orderTypes}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                className={`${
-                  (item === "Active" && "bg-cyan-500 ") ||
-                  (item === "Completed" && "bg-teal-500 ")
-                } p-3 rounded-md  shadow-md flex-row justify-between `}
-                onPress={() => {
-                  seOrderType(item);
-                }}
+        <View className="flex-row justify-between mt-5">
+          {orderTypes.map((item) => (
+            <TouchableOpacity
+              key={item}
+              className={`flex-1 p-3 items-center ${
+                orderType === item
+                  ? "border-b-4 border-green-500"
+                  : "border-b-4 border-gray-300"
+              }`}
+              onPress={() => {
+                setOrderType(item);
+              }}
+            >
+              <Text
+                className={`font-bold text-base ${
+                  orderType === item ? "text-green-500" : "text-gray-400"
+                }`}
               >
-                <Text
-                  className={`${
-                    (item === "Active" && "text-cyan-800 ") ||
-                    (item === "Completed" && "text-teal-700 ")
-                  } font-bold`}
-                  style={orderType === item ? { color: "white" } : {}}
-                >
-                  {item}
-                </Text>
-              </TouchableOpacity>
-            )}
-            keyExtractor={(item) => item}
-            contentContainerStyle={{ columnGap: 10 }}
-            horizontal
-          />
+                {item}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
 
-        <View className="">{displayTabContent()}</View>
+        {/* Content Area */}
+        <View className="mt-4">{displayTabContent()}</View>
       </ScrollView>
     </SafeAreaView>
   );

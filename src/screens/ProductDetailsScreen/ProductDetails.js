@@ -48,8 +48,8 @@ const ProductDetails = () => {
         id: plantInfo?.data?.id,
         plantName: plantInfo?.data?.plantName,
         plantImageUrl: plantInfo?.data?.plantImageUrl,
-        price: price * quantity,
-        quantity,
+        price, // pass the unit price directly
+        quantity, // pass the quantity separately
       })
     );
   };

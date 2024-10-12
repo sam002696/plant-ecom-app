@@ -1,8 +1,37 @@
 import React from "react";
 import { Modal, View, Text, TouchableOpacity, Image } from "react-native";
-import { BlurView } from "expo-blur"; // You can use this if expo-blur is installed or use a View with opacity
+import { BlurView } from "expo-blur";
+import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch } from "react-redux";
+import { clearCart } from "../../reducers/cartSlice";
+import { clearState } from "../../reducers/apiSlice";
 
 const OrderSuccessModal = ({ isVisible, onClose }) => {
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const handleViewOrder = async () => {
+    try {
+      // Removing AsyncStorage items
+      await AsyncStorage.removeItem("selectedShippingOption");
+      await AsyncStorage.removeItem("selectedShippingAddress");
+
+      // Dispatching Redux actions and awaiting if needed
+      dispatch(clearCart()); // Assuming clearCart is async, otherwise no need to await
+      dispatch(
+        clearState({
+          output: "orderPlace",
+        })
+      );
+
+      // Navigate after async operations complete
+    } catch (error) {
+      console.error("Error in handleViewOrder: ", error);
+    }
+    navigation.navigate("Orders");
+  };
+
   return (
     <Modal visible={isVisible} transparent animationType="fade">
       <BlurView
@@ -21,7 +50,7 @@ const OrderSuccessModal = ({ isVisible, onClose }) => {
             You have successfully made the order!
           </Text>
           <TouchableOpacity
-            onPress={onClose}
+            onPress={() => handleViewOrder()}
             className="bg-green-500 py-2 px-11 rounded-full mt-2"
           >
             <Text className="text-white text-sm font-bold">View Order</Text>

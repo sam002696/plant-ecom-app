@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Ionicons from "react-native-vector-icons/AntDesign";
+import Ionicons from "react-native-vector-icons/Feather";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 // Screens
@@ -28,7 +28,7 @@ const homeName = "Home";
 const profileName = "Profile";
 const cartName = "Cart";
 const orderName = "Orders";
-const walletName = "Wallet";
+// const walletName = "Wallet";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -135,9 +135,9 @@ const MainNavigator = () => {
           if (rn === homeName) {
             iconName = focused ? "home" : "home";
           } else if (rn === cartName) {
-            iconName = focused ? "cloudo" : "cloudo";
+            iconName = focused ? "shopping-bag" : "shopping-bag";
           } else if (rn === orderName) {
-            iconName = focused ? "shoppingcart" : "shoppingcart";
+            iconName = focused ? "shopping-cart" : "shopping-cart";
           }
           // else if (rn === walletName) {
           //   iconName = focused ? "wallet" : "wallet";

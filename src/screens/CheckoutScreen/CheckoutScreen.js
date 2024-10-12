@@ -5,6 +5,7 @@ import {
   ScrollView,
   Image,
   Pressable,
+  ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native";
@@ -22,7 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { initializeCart, selectCart } from "../../reducers/cartSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ShippingType } from "../../utilities/ShippingType";
-import { callApi, selectApi } from "../../reducers/apiSlice";
+import { callApi, clearState, selectApi } from "../../reducers/apiSlice";
 import { UrlBuilder } from "../../helpers/UrlBuilder";
 import OrderSuccessModal from "./OrderSuccessModal";
 
@@ -31,12 +32,13 @@ const CheckoutScreen = () => {
     orderPlace = {
       data: {},
     },
+    loading,
   } = useSelector(selectApi);
   const navigation = useNavigation();
 
   const [shippingType, setShippingType] = useState();
   const [shippingAddress, setShippingAddress] = useState();
-  const [isModalVisible, setModalVisible] = useState(true);
+  const [isModalVisible, setModalVisible] = useState(false);
 
   const dispatch = useDispatch();
   const { items } = useSelector(selectCart);
@@ -110,10 +112,31 @@ const CheckoutScreen = () => {
   };
 
   useEffect(() => {
+    dispatch(
+      clearState({
+        output: "orderPlace",
+      })
+    );
+    setModalVisible(false);
+  }, []);
+
+  useEffect(() => {
     if (orderPlace?.status === "success") {
       setModalVisible(true);
+    } else {
+      setModalVisible(false);
     }
   }, [orderPlace?.status]);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#01B763" />
+      </View>
+    );
+  }
+
+  console.log("orderPlace?.status", orderPlace?.status);
 
   return (
     <SafeAreaView className=" flex-1 bg-gray-50 ">
@@ -154,12 +177,23 @@ const CheckoutScreen = () => {
               <View className="flex-row items-center space-x-3">
                 <MapPinIcon size={25} color="green" />
                 <View>
-                  <Text className="text-neutral-800 text-lg font-bold leading-snug">
-                    {shippingAddress?.addressType}
-                  </Text>
-                  <Text className="text-zinc-600 text-sm font-medium  leading-tight tracking-tight">
-                    {shippingAddress?.streetAddress}, {shippingAddress?.zipcode}
-                  </Text>
+                  {shippingAddress ? (
+                    <>
+                      <Text className="text-neutral-800 text-lg font-bold leading-snug">
+                        {shippingAddress?.addressType}
+                      </Text>
+                      <Text className="text-zinc-600 text-sm font-medium  leading-tight tracking-tight">
+                        {shippingAddress?.streetAddress},{" "}
+                        {shippingAddress?.zipcode}
+                      </Text>
+                    </>
+                  ) : (
+                    <>
+                      <Text className="text-neutral-800 text-sm font-semibold  leading-snug">
+                        Choose Shipping Address
+                      </Text>
+                    </>
+                  )}
                 </View>
               </View>
               <View>
@@ -253,7 +287,7 @@ const CheckoutScreen = () => {
                   </>
                 ) : (
                   <>
-                    <Text className="text-neutral-800 text-lg font-bold leading-snug">
+                    <Text className="text-neutral-800 text-sm font-semibold ml-3 leading-snug">
                       Choose Shipping Type
                     </Text>
                   </>
@@ -261,7 +295,7 @@ const CheckoutScreen = () => {
               </View>
               <View className="flex flex-row items-center">
                 <Text className="text-lg font-bold text-green-500 mr-2">
-                  ${shippingType?.price}
+                  {shippingType && `$${shippingType?.price}`}
                 </Text>
                 <View>
                   <ChevronRightIcon size={25} color="green" />
@@ -308,7 +342,11 @@ const CheckoutScreen = () => {
               <Text className=" text-right text-neutral-700 text-base font-semibold  leading-snug tracking-tight">
                 ${items.reduce((sum, item) => sum + item?.price, 0)}
               </Text>
-              <Text className="text-end">${shippingType?.price}</Text>
+              {shippingType?.price ? (
+                <Text className="text-end">${shippingType?.price}</Text>
+              ) : (
+                <Text>-</Text>
+              )}
             </View>
           </View>
 
@@ -324,9 +362,15 @@ const CheckoutScreen = () => {
             </View>
             <View className="">
               <Text>
-                $
-                {items.reduce((sum, item) => sum + item?.price, 0) +
-                  shippingType?.price}
+                {shippingType?.price ? (
+                  <>
+                    $
+                    {items.reduce((sum, item) => sum + item?.price, 0) +
+                      shippingType?.price}
+                  </>
+                ) : (
+                  <> - </>
+                )}
               </Text>
             </View>
           </View>
@@ -352,6 +396,7 @@ const CheckoutScreen = () => {
           isVisible={isModalVisible}
           onClose={() => {
             setModalVisible(false);
+            dispatch(clearState("orderPlace"));
           }}
         />
       </ScrollView>
