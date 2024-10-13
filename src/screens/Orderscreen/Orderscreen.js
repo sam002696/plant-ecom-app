@@ -6,27 +6,59 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   EllipsisHorizontalCircleIcon,
   MagnifyingGlassIcon,
 } from "react-native-heroicons/outline";
 import ActiveOrders from "./ActiveOrders";
+import { callApi, selectApi } from "../../reducers/apiSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { UrlBuilder } from "../../helpers/UrlBuilder";
+import EmptyList from "../EmptyList/EmptyList";
 
 const Orderscreen = () => {
+  const { plantOrders = { data: [] } } = useSelector(selectApi);
+  const dispatch = useDispatch();
   const orderTypes = ["Active", "Completed"];
   const [orderType, setOrderType] = useState("Active");
 
   const displayTabContent = () => {
     switch (orderType) {
       case "Active":
-        return <ActiveOrders />;
+        return plantOrders?.data && plantOrders?.data?.length > 0 ? (
+          <ActiveOrders activeOrders={plantOrders?.data} />
+        ) : (
+          <EmptyList
+            text={`You don't have any order yet`}
+            detailedText={`You don't have any active orders at this time`}
+          />
+        );
       case "Completed":
-        return null; // Add your CompletedOrders component here
+        return (
+          <EmptyList
+            text={`You don't have any order yet`}
+            detailedText={`You don't have any completed orders at this time`}
+          />
+        );
       default:
         return null;
     }
   };
+
+  useEffect(() => {
+    dispatch(
+      callApi({
+        operationId: UrlBuilder.plantApiLocalhost(
+          `order/order-status/list?status=PLACED`
+        ),
+        output: "plantOrders",
+        storeName: "plantOrders",
+      })
+    );
+  }, [dispatch]);
+
+  console.log("plantOrders", plantOrders);
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">

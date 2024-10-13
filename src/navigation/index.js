@@ -149,11 +149,13 @@ const MainNavigator = () => {
           // You can return any component that you like here!
           return <Ionicons name={iconName} size={size} color={color} />;
         },
+        tabBarActiveTintColor: "#01B763",
+        tabBarInactiveTintColor: "#9E9E9E",
       })}
       screenOption={{
-        showLabel: true, // Hide labels
-        activeTintColor: "#01B763",
-        inactiveTintColor: "#9E9E9E",
+        showLabel: true,
+        // activeTintColor: "#01B763",
+        // inactiveTintColor: "#9E9E9E",
         tabStyle: { paddingVertical: 10, paddingHorizontal: 20, height: 70 }, // Add padding to icons
       }}
     >

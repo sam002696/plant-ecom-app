@@ -26,6 +26,7 @@ import {
   selectCart,
 } from "../../reducers/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
+import EmptyList from "../EmptyList/EmptyList";
 
 const Cartscreen = () => {
   const navigation = useNavigation();
@@ -85,85 +86,98 @@ const Cartscreen = () => {
           </View>
         </View>
 
-        {/* All Products */}
+        {items && items.length > 0 ? (
+          <>
+            {/* All added products */}
 
-        {items && items.length > 0
-          ? items.map((row, index) => (
-              <View
-                key={row.id}
-                className=" rounded-[32px]  bg-white shadow-sm mx-3 mt-5"
-              >
-                <View className="flex-row items-center space-x-2">
-                  <View>
-                    <View className=" rounded-[32px] m-4 bg-gray-50">
-                      <Image
-                        className="w-32 h-32 rounded-[32px] "
-                        source={{ uri: row.plantImageUrl }}
-                      />
-                    </View>
-                  </View>
-                  <View>
-                    <Text className=" text-neutral-800 text-lg font-bold leading-snug">
-                      {row.plantName}
-                    </Text>
-                    <Text className=" text-emerald-500 text-lg font-bold  leading-snug">
-                      ${row.price}
-                    </Text>
-                    <View className="flex-row items-center justify-between  w-48 mt-1">
-                      <View className="flex-row space-x-3 items-center bg-stone-50 shadow-sm px-3 py-1 rounded-3xl">
-                        <TouchableOpacity
-                          onPress={() => handleDecreaseQuantity(row.id)}
-                        >
-                          <MinusIcon color="#01B763" />
-                        </TouchableOpacity>
-                        <Text className=" text-emerald-500 text-sm font-bold leading-snug">
-                          {row.quantity}
-                        </Text>
-                        <TouchableOpacity
-                          onPress={() => handleIncreaseQuantity(row.id)}
-                        >
-                          <PlusIcon color="#01B763" />
-                        </TouchableOpacity>
+            {items && items.length > 0
+              ? items.map((row, index) => (
+                  <View
+                    key={row.id}
+                    className=" rounded-[32px]  bg-white shadow-sm mx-3 mt-5"
+                  >
+                    <View className="flex-row items-center space-x-2">
+                      <View>
+                        <View className=" rounded-[32px] m-4 bg-gray-50">
+                          <Image
+                            className="w-32 h-32 rounded-[32px] "
+                            source={{ uri: row.plantImageUrl }}
+                          />
+                        </View>
                       </View>
+                      <View>
+                        <Text className=" text-neutral-800 text-lg font-bold leading-snug">
+                          {row.plantName}
+                        </Text>
+                        <Text className=" text-emerald-500 text-lg font-bold  leading-snug">
+                          ${row.price}
+                        </Text>
+                        <View className="flex-row items-center justify-between  w-48 mt-1">
+                          <View className="flex-row space-x-3 items-center bg-stone-50 shadow-sm px-3 py-1 rounded-3xl">
+                            <TouchableOpacity
+                              onPress={() => handleDecreaseQuantity(row.id)}
+                            >
+                              <MinusIcon color="#01B763" />
+                            </TouchableOpacity>
+                            <Text className=" text-emerald-500 text-sm font-bold leading-snug">
+                              {row.quantity}
+                            </Text>
+                            <TouchableOpacity
+                              onPress={() => handleIncreaseQuantity(row.id)}
+                            >
+                              <PlusIcon color="#01B763" />
+                            </TouchableOpacity>
+                          </View>
 
-                      <Pressable onPress={() => handleRemovePress(row)}>
-                        <TrashIcon color="red" />
-                      </Pressable>
+                          <Pressable onPress={() => handleRemovePress(row)}>
+                            <TrashIcon color="red" />
+                          </Pressable>
+                        </View>
+                      </View>
                     </View>
                   </View>
-                </View>
-              </View>
-            ))
-          : ""}
+                ))
+              : ""}
+          </>
+        ) : (
+          <>
+            <EmptyList
+              text={`Your cart is empty`}
+              detailedText={`You don't have any items added to cart yet. You need to add items to cart before checkout`}
+            />
+          </>
+        )}
       </ScrollView>
 
-      <View
-        className="bg-white px-8 py-3 shadow-md"
-        style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          borderTopLeftRadius: 50,
-          borderTopRightRadius: 50,
-          paddingBottom: 20, // Optional: padding for spacing
-        }}
-      >
-        <View className="flex flex-row items-center justify-between">
-          <View>
-            <Text className="text-gray-500 text-sm">Total Price:</Text>
-            <Text className=" font-bold text-2xl">${totalPrice}</Text>
-          </View>
-          <View>
-            <TouchableOpacity
-              onPress={() => navigation.navigate("Checkout")}
-              className="px-10 py-4 bg-green-500 rounded-full"
-            >
-              <Text className="text-white font-bold">Checkout</Text>
-            </TouchableOpacity>
+      {items && items.length > 0 && (
+        <View
+          className="bg-white px-8 py-3 shadow-md"
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            borderTopLeftRadius: 50,
+            borderTopRightRadius: 50,
+            paddingBottom: 20, // Optional: padding for spacing
+          }}
+        >
+          <View className="flex flex-row items-center justify-between">
+            <View>
+              <Text className="text-gray-500 text-sm">Total Price:</Text>
+              <Text className=" font-bold text-2xl">${totalPrice}</Text>
+            </View>
+            <View>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("Checkout")}
+                className="px-10 py-4 bg-green-500 rounded-full"
+              >
+                <Text className="text-white font-bold">Checkout</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
+      )}
 
       <BottomModal
         onBackdropPress={() => setModalVisible(!modalVisible)}
