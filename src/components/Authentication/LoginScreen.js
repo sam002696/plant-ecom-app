@@ -62,23 +62,27 @@ const LoginScreen = () => {
 
   return (
     <View
-      className="flex-1 bg-white"
-      style={{ backgroundColor: theme.indigo.base(0.8) }}
+      className="flex-1 bg-green-50"
+      // style={{ backgroundColor: theme.indigo.base(0.8) }}
     >
       <SafeAreaView className="flex">
         <View className="flex-row justify-start">
           <TouchableOpacity
             onPress={() => navigation.goBack()}
-            className="bg-yellow-400 p-2 rounded-tr-2xl rounded-bl-2xl ml-4"
+            className="bg-green-400 p-2 rounded-tr-2xl rounded-bl-2xl ml-4"
           >
             <ArrowLeftIcon size="20" color="black" />
           </TouchableOpacity>
         </View>
         <View className="flex-row justify-center">
           <Image
-            source={require("../../images/welcome.jpg")}
-            style={{ width: 200, height: 200 }}
+            className="shadow-sm"
+            source={require("../../images/login_image.png")}
+            // style={{ width: 200, height: 200 }}
           />
+        </View>
+        <View className="items-center justify-center mt-5">
+          <Text className="text-xl font-bold">Login to your account</Text>
         </View>
       </SafeAreaView>
 
@@ -148,7 +152,7 @@ const LoginScreen = () => {
               </TouchableOpacity>
 
               <TouchableOpacity
-                className="py-3 bg-yellow-400 rounded-xl"
+                className="py-3 bg-green-400 rounded-xl"
                 onPress={handleSubmit}
               >
                 <Text className="font-xl font-bold text-center text-gray-700">
@@ -162,7 +166,7 @@ const LoginScreen = () => {
                 Don't have an account?
               </Text>
               <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
-                <Text className="font-semibold text-yellow-500">Sign Up</Text>
+                <Text className="font-semibold text-green-500"> Sign Up</Text>
               </TouchableOpacity>
             </View>
           </View>
