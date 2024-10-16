@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   TextInput,
   Image,
+  ImageBackground,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { theme } from "../../theme";
@@ -65,6 +66,16 @@ const LoginScreen = () => {
       className="flex-1 bg-green-50"
       // style={{ backgroundColor: theme.indigo.base(0.8) }}
     >
+      <ImageBackground
+        source={require("../../images/signup_bg.jpg")}
+        className="absolute w-full h-full"
+      >
+        <View className=" bottom-0 top-32 inset-0 justify-center items-center">
+          <Text className="text-gray-500 text-2xl font-bold">
+            Login to your <Text className="text-green-500">account</Text>
+          </Text>
+        </View>
+      </ImageBackground>
       <SafeAreaView className="flex">
         <View className="flex-row justify-start">
           <TouchableOpacity
@@ -74,7 +85,7 @@ const LoginScreen = () => {
             <ArrowLeftIcon size="20" color="black" />
           </TouchableOpacity>
         </View>
-        <View className="flex-row justify-center">
+        {/* <View className="flex-row justify-center">
           <Image
             className="shadow-sm"
             source={require("../../images/login_image.png")}
@@ -83,7 +94,7 @@ const LoginScreen = () => {
         </View>
         <View className="items-center justify-center mt-5">
           <Text className="text-xl font-bold">Login to your account</Text>
-        </View>
+        </View> */}
       </SafeAreaView>
 
       <Formik
@@ -113,7 +124,7 @@ const LoginScreen = () => {
           touched,
         }) => (
           <View
-            className="flex-1 bg-white px-8 pt-8 mt-5"
+            className="flex-1 bg-white px-8 pt-8 mt-40"
             style={{ borderTopLeftRadius: 50, borderTopRightRadius: 50 }}
           >
             <View className="form space-y-2">

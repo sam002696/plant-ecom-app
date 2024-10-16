@@ -22,17 +22,17 @@ const WelcomeScreen = () => {
         source={require("../../images/plant_bg_image.jpg")}
         resizeMode="cover"
         style={{
-          flex: 1,
+          // flex: 1,
           width: "100%",
-          height: "100%",
+          height: "110%",
           justifyContent: "center",
-        }} // Ensure full height and width
-        className="absolute "
+        }}
+        className="absolute opacity-90"
       />
 
-      <View className="flex-1 justify-around my-4">
-        <Text className="text-white font-bold text-4xl text-center">
-          Let's get started!
+      <View className="flex-1 justify-between my-1">
+        <Text className="text-white font-bold text-4xl text-center mt-12">
+          Welcome to <Text className="text-yellow-400"> Potea! </Text>
         </Text>
         <View className="space-y-4">
           <TouchableOpacity
@@ -43,12 +43,14 @@ const WelcomeScreen = () => {
               Sign Up
             </Text>
           </TouchableOpacity>
-          <View className="flex-row justify-center">
-            <Text className="text-white font-semibold ">
+          <View className="flex-row justify-center ">
+            <Text className="text-white font-semibold text-lg ">
               Already have an account?
             </Text>
             <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-              <Text className="font-semibold text-yellow-400">Log In</Text>
+              <Text className="font-semibold text-yellow-400 text-lg">
+                Log In
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -31,11 +31,15 @@ const SignUpScreen = () => {
   return (
     <View className="flex-1 bg-green-50">
       <ImageBackground
-        source={require("../../images/login_image.png")}
-        resizeMode="cover"
+        source={require("../../images/signup_bg.jpg")}
         className="absolute w-full h-full"
-        style={{ opacity: 0.3 }}
-      />
+      >
+        <View className=" bottom-0 top-32 inset-0 justify-center items-center">
+          <Text className="text-gray-500 text-2xl font-bold">
+            Create your <Text className="text-green-500">account</Text>
+          </Text>
+        </View>
+      </ImageBackground>
       <SafeAreaView className="flex">
         <View className="flex-row justify-start">
           <TouchableOpacity
@@ -51,30 +55,32 @@ const SignUpScreen = () => {
         className="flex-1 bg-white px-8 pt-8 mt-36"
         style={{ borderTopLeftRadius: 50, borderTopRightRadius: 50 }}
       >
-        <View className="form space-y-2">
-          <Text className="text-gray-700 ml-4">Full Name</Text>
-          <TextInput
-            className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
-            value="John Snow"
-            placeholder="Enter your name"
-          />
+        <View className="form">
+          <View className="space-y-2">
+            <Text className="text-gray-700 ml-4">Full Name</Text>
+            <TextInput
+              className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
+              value="John Snow"
+              placeholder="Enter your name"
+            />
 
-          <Text className="text-gray-700 ml-4">Email Address</Text>
-          <TextInput
-            className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
-            value="john@gmail.com"
-            placeholder="Enter your email"
-          />
+            <Text className="text-gray-700 ml-4">Email Address</Text>
+            <TextInput
+              className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
+              value="john@gmail.com"
+              placeholder="Enter your email"
+            />
 
-          <Text className="text-gray-700 ml-4">Password</Text>
-          <TextInput
-            className="p-4 bg-gray-100 text-gray-700 rounded-2xl"
-            secureTextEntry
-            value="test123445"
-            placeholder="Enter your password"
-          />
+            <Text className="text-gray-700 ml-4">Password</Text>
+            <TextInput
+              className="p-4 bg-gray-100 text-gray-700 rounded-2xl"
+              secureTextEntry
+              value="test123445"
+              placeholder="Enter your password"
+            />
+          </View>
 
-          <TouchableOpacity className="py-3 bg-green-400 rounded-xl">
+          <TouchableOpacity className="py-3 bg-green-400 rounded-xl mt-10">
             <Text className="font-xl font-bold text-center text-gray-700">
               Sign Up
             </Text>
