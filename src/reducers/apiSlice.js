@@ -57,6 +57,16 @@ export const apiSlice = createSlice({
         success: payload.status,
       };
     },
+    // New reducer to refresh API when loading state changes
+    refreshApi: (state) => {
+      if (!state.loading) {
+        return {
+          ...state,
+          loading: false, // Set loading to true to initiate refresh
+        };
+      }
+      return state;
+    },
   },
 });
 
@@ -68,6 +78,7 @@ export const {
   setState,
   setStatus,
   clearAuthState,
+  refreshApi,
 } = apiSlice.actions;
 export const selectApi = (state) => state.api;
 export default apiSlice.reducer;

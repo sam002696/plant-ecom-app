@@ -1,11 +1,9 @@
 import { call, put, takeEvery } from "redux-saga/effects";
 import { failed, succeed } from "../reducers/apiSlice";
 import fetcher from "../lib/fetcher";
-// import { setToastAlert } from "../reducers/toastAlertSlice";
-// import { setErrorMessage } from "../reducers/errorMessageSlice";
 import { AuthUser } from "../helpers/AuthUser";
-// import SwaggerClient from 'swagger-client';
-// const scheme = process.env.REACT_APP_API_PROTOCOL || 'https';
+import { setToastAlert } from "../reducers/toastAlertSlice";
+import { setErrorMessage } from "../reducers/errorMessageSlice";
 
 export default function* sagas() {
   yield takeEvery(({ payload: { operationId = null } }) => {
@@ -25,14 +23,14 @@ function* performApiAction(action) {
       AuthUser.removeLoginData();
     }
 
-    // if (response.message !== null) {
-    //   yield put(
-    //     setToastAlert({
-    //       type: response.status,
-    //       message: response.message,
-    //     })
-    //   );
-    // }
+    if (response.message !== null) {
+      yield put(
+        setToastAlert({
+          type: response.status,
+          message: response.message,
+        })
+      );
+    }
 
     yield put(
       succeed({

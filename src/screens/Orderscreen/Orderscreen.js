@@ -12,7 +12,7 @@ import {
   MagnifyingGlassIcon,
 } from "react-native-heroicons/outline";
 import ActiveOrders from "./ActiveOrders";
-import { callApi, selectApi } from "../../reducers/apiSlice";
+import { callApi, refreshApi, selectApi } from "../../reducers/apiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { UrlBuilder } from "../../helpers/UrlBuilder";
 import EmptyList from "../EmptyList/EmptyList";
@@ -22,29 +22,7 @@ const Orderscreen = () => {
   const dispatch = useDispatch();
   const orderTypes = ["Active", "Completed"];
   const [orderType, setOrderType] = useState("Active");
-
-  const displayTabContent = () => {
-    switch (orderType) {
-      case "Active":
-        return plantOrders?.data && plantOrders?.data?.length > 0 ? (
-          <ActiveOrders activeOrders={plantOrders?.data} />
-        ) : (
-          <EmptyList
-            text={`You don't have any order yet`}
-            detailedText={`You don't have any active orders at this time`}
-          />
-        );
-      case "Completed":
-        return (
-          <EmptyList
-            text={`You don't have any order yet`}
-            detailedText={`You don't have any completed orders at this time`}
-          />
-        );
-      default:
-        return null;
-    }
-  };
+  const [refreshActiveOrder, setRefreshActiveOrder] = useState(false);
 
   useEffect(() => {
     dispatch(
@@ -57,6 +35,40 @@ const Orderscreen = () => {
       })
     );
   }, [dispatch]);
+
+  // useEffect(() => {
+  //   if (refreshActiveOrder) {
+  //     dispatch(refreshApi());
+  //     setRefreshActiveOrder(false);
+  //   }
+  // }, [refreshActiveOrder, dispatch]);
+
+  const renderOrdersContent = () => {
+    if (orderType === "Active") {
+      if (plantOrders?.data?.length > 0) {
+        return (
+          <ActiveOrders
+            activeOrders={plantOrders?.data}
+            setRefreshActiveOrder={setRefreshActiveOrder}
+          />
+        );
+      } else {
+        return (
+          <EmptyList
+            text={`You don't have any order yet`}
+            detailedText={`You don't have any active orders at this time`}
+          />
+        );
+      }
+    } else if (orderType === "Completed") {
+      return (
+        <EmptyList
+          text={`You don't have any order yet`}
+          detailedText={`You don't have any completed orders at this time`}
+        />
+      );
+    }
+  };
 
   console.log("plantOrders", plantOrders);
 
@@ -90,9 +102,7 @@ const Orderscreen = () => {
                   ? "border-b-4 border-green-500"
                   : "border-b-4 border-gray-300"
               }`}
-              onPress={() => {
-                setOrderType(item);
-              }}
+              onPress={() => setOrderType(item)}
             >
               <Text
                 className={`font-bold text-base ${
@@ -106,7 +116,7 @@ const Orderscreen = () => {
         </View>
 
         {/* Content Area */}
-        <View className="mt-4">{displayTabContent()}</View>
+        <View className="mt-4">{renderOrdersContent()}</View>
       </ScrollView>
     </SafeAreaView>
   );

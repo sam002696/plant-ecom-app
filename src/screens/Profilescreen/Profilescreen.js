@@ -6,7 +6,7 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   ChevronRightIcon,
   EllipsisHorizontalCircleIcon,
@@ -17,11 +17,27 @@ import { AuthUser } from "../../helpers/AuthUser";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Profilescreen = () => {
+  const [user, setUser] = useState(null);
   const navigation = useNavigation();
 
   const handleLogout = async () => {
     await AuthUser.removeLoginData();
   };
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userData = await AuthUser.getUser(); // Await for user data
+        setUser(userData); // Store user data in state
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, [AuthUser]);
+
+  console.log("user", user);
 
   return (
     <SafeAreaView className="bg-gray-50 flex-1">
@@ -48,10 +64,10 @@ const Profilescreen = () => {
             source={require("../../../assets/images/user/user.png")}
           />
           <Text className="text-center text-neutral-800 text-2xl font-bold leading-[28.80px]">
-            Andrew Ainsley
+            {user?.username}
           </Text>
           <Text className="text-center text-neutral-800 text-sm font-semibold leading-tight tracking-tight">
-            +1 111 467 378 399
+            {user?.email}
           </Text>
         </View>
         {/* Border */}
