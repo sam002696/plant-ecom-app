@@ -8,11 +8,10 @@ import {
 import React, { useEffect, useState } from "react";
 import { UrlBuilder } from "../../helpers/UrlBuilder";
 import { useDispatch, useSelector } from "react-redux";
-// import { callApi, selectApi } from "../../reducers/apiSlice";
 import { ModalContent } from "react-native-modals";
 import { BottomModal } from "react-native-modals";
 import { SlideAnimation } from "react-native-modals";
-import { callApi, selectApi } from "../../reducers/apiSlice";
+import { callApi, clearState, selectApi } from "../../reducers/apiSlice";
 
 const ActiveOrders = ({ activeOrders, setRefreshActiveOrder }) => {
   const { cancelOrder = { data: {} }, loading } = useSelector(selectApi);
@@ -40,10 +39,21 @@ const ActiveOrders = ({ activeOrders, setRefreshActiveOrder }) => {
         storeName: "cancelOrder",
       })
     );
-    setModalVisible(false);
   };
 
-  // Return loading state first, no hooks should be skipped
+  useEffect(() => {
+    if (cancelOrder?.status === "success") {
+      setRefreshActiveOrder(true);
+      setModalVisible(false);
+
+      dispatch(
+        clearState({
+          output: "cancelOrder",
+        })
+      );
+    }
+  }, [cancelOrder?.status, setRefreshActiveOrder]);
+
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>

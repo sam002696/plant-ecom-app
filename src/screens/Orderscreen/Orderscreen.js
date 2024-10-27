@@ -12,10 +12,11 @@ import {
   MagnifyingGlassIcon,
 } from "react-native-heroicons/outline";
 import ActiveOrders from "./ActiveOrders";
-import { callApi, refreshApi, selectApi } from "../../reducers/apiSlice";
+import { callApi, selectApi } from "../../reducers/apiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { UrlBuilder } from "../../helpers/UrlBuilder";
 import EmptyList from "../EmptyList/EmptyList";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Orderscreen = () => {
   const { plantOrders = { data: [] } } = useSelector(selectApi);
@@ -24,24 +25,44 @@ const Orderscreen = () => {
   const [orderType, setOrderType] = useState("Active");
   const [refreshActiveOrder, setRefreshActiveOrder] = useState(false);
 
-  useEffect(() => {
-    dispatch(
-      callApi({
-        operationId: UrlBuilder.plantApiLocalhost(
-          `order/order-status/list?status=PLACED`
-        ),
-        output: "plantOrders",
-        storeName: "plantOrders",
-      })
-    );
-  }, [dispatch]);
+  useFocusEffect(
+    React.useCallback(() => {
+      const getOrderStatusPlaced = () => {
+        dispatch(
+          callApi({
+            operationId: UrlBuilder.plantApiLocalhost(
+              `order/order-status/list?status=PLACED`
+            ),
+            output: "plantOrders",
+            storeName: "plantOrders",
+          })
+        );
+      };
+      getOrderStatusPlaced();
+    }, [dispatch])
+  );
 
-  // useEffect(() => {
-  //   if (refreshActiveOrder) {
-  //     dispatch(refreshApi());
-  //     setRefreshActiveOrder(false);
-  //   }
-  // }, [refreshActiveOrder, dispatch]);
+  useEffect(() => {
+    if (refreshActiveOrder) {
+      dispatch(
+        callApi({
+          operationId: UrlBuilder.plantApiLocalhost(
+            `order/order-status/list?status=PLACED`
+          ),
+          output: "plantOrders",
+          storeName: "plantOrders",
+        })
+      );
+    }
+  }, [refreshActiveOrder, dispatch]);
+
+  useEffect(() => {
+    if (plantOrders?.data?.length > 0 && refreshActiveOrder) {
+      setRefreshActiveOrder(false);
+    }
+  }, [plantOrders, refreshActiveOrder]);
+
+  console.log("refreshActiveOrder", refreshActiveOrder);
 
   const renderOrdersContent = () => {
     if (orderType === "Active") {
@@ -69,8 +90,6 @@ const Orderscreen = () => {
       );
     }
   };
-
-  console.log("plantOrders", plantOrders);
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">

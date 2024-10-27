@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Modal, View, Text, TouchableOpacity, Image } from "react-native";
 import { BlurView } from "expo-blur";
 import { useNavigation } from "@react-navigation/native";
@@ -10,24 +10,22 @@ import { clearState } from "../../reducers/apiSlice";
 const OrderSuccessModal = ({ isVisible, onClose }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const [error, setError] = useState(false);
 
   const handleViewOrder = async () => {
     try {
-      // Removing AsyncStorage items
       await AsyncStorage.removeItem("selectedShippingOption");
       await AsyncStorage.removeItem("selectedShippingAddress");
 
-      // Dispatching Redux actions and awaiting if needed
-      dispatch(clearCart()); // Assuming clearCart is async, otherwise no need to await
+      dispatch(clearCart());
+
       dispatch(
         clearState({
           output: "orderPlace",
         })
       );
-
-      // Navigate after async operations complete
     } catch (error) {
-      console.error("Error in handleViewOrder: ", error);
+      setError(error);
     }
     navigation.navigate("Orders");
   };
