@@ -19,8 +19,8 @@ class AuthUserHelper {
   }
 
   async getUserName() {
-    const user = JSON.parse((await AsyncStorage.getItem("auth_user")) || "{}");
-    return user?.username || null;
+    const username = await AsyncStorage.getItem("username");
+    return username || null;
   }
 
   async getUserFullName() {
@@ -79,6 +79,20 @@ class AuthUserHelper {
       let token = authData.data.accessToken || "";
       await AsyncStorage.setItem("access_token", token);
       await AsyncStorage.setItem("auth_user", JSON.stringify(authData?.data));
+      await AsyncStorage.setItem("username", authData?.data?.username);
+      await AsyncStorage.setItem("phoneNo", authData?.data?.phoneNo);
+    } catch (e) {
+      console.error("Error saving login data:", e);
+    }
+  }
+
+  async saveUserData(user) {
+    try {
+      console.log("saving user data :", user);
+      await AsyncStorage.setItem("username", user?.name);
+      await AsyncStorage.setItem("phoneNo", user?.phoneNumber);
+      await AsyncStorage.setItem("profileImage", user?.profileImage);
+      // needs to be checked with backend
     } catch (e) {
       console.error("Error saving login data:", e);
     }

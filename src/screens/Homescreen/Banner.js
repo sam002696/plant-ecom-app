@@ -4,6 +4,13 @@ import { BellIcon, HeartIcon } from "react-native-heroicons/outline";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 const Banner = ({ user }) => {
+  const getGreeting = () => {
+    const currentHour = new Date().getHours();
+    if (currentHour < 12) return "Good Morning 👋";
+    if (currentHour < 18) return "Good Afternoon 👋";
+    return "Good Evening 👋";
+  };
+
   return (
     <View className="flex-row justify-between items-center mb-2 mt-4">
       <View className="flex-row items-center space-x-3">
@@ -13,10 +20,10 @@ const Banner = ({ user }) => {
         />
         <View className="space-y-2">
           <Text className="text-neutral-500 text-base font-medium leading-snug tracking-tight">
-            Good Morning 👋
+            {getGreeting()}
           </Text>
           <Text className="text-neutral-800 text-xl font-bold leading-normal">
-            {user?.username}
+            {user}
           </Text>
         </View>
       </View>

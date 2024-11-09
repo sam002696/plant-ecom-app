@@ -6,13 +6,13 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ChevronRightIcon,
   EllipsisHorizontalCircleIcon,
   UserIcon,
 } from "react-native-heroicons/outline";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { AuthUser } from "../../helpers/AuthUser";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -24,18 +24,20 @@ const Profilescreen = () => {
     await AuthUser.removeLoginData();
   };
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const userData = await AuthUser.getUser(); // Await for user data
-        setUser(userData); // Store user data in state
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
+  useFocusEffect(
+    useCallback(() => {
+      const fetchUserData = async () => {
+        try {
+          const userData = await AuthUser.getUserName(); // Await for user data
+          setUser(userData); // Store user data in state
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      };
 
-    fetchUserData();
-  }, [AuthUser]);
+      fetchUserData();
+    }, [])
+  );
 
   console.log("user", user);
 
@@ -64,7 +66,7 @@ const Profilescreen = () => {
             source={require("../../../assets/images/user/user.png")}
           />
           <Text className="text-center text-neutral-800 text-2xl font-bold leading-[28.80px]">
-            {user?.username}
+            {user}
           </Text>
           <Text className="text-center text-neutral-800 text-sm font-semibold leading-tight tracking-tight">
             {user?.email}

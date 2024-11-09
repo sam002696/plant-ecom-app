@@ -1,261 +1,224 @@
+import React, { useEffect } from "react";
 import {
   View,
   Text,
   SafeAreaView,
   ScrollView,
   TextInput,
-  Button,
   TouchableOpacity,
-  TouchableWithoutFeedback,
+  Image,
 } from "react-native";
-import React, { useState } from "react";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
-import { useForm, Controller } from "react-hook-form";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { useNavigation } from "@react-navigation/native";
-import { Picker } from "@react-native-picker/picker";
+import { Formik } from "formik";
+import * as ImagePicker from "expo-image-picker";
+import { UrlBuilder } from "../../helpers/UrlBuilder";
+import * as Yup from "yup";
+import { callApi, clearState, selectApi } from "../../reducers/apiSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { AuthUser } from "../../helpers/AuthUser";
 
 const EditProfile = () => {
-  const { control, handleSubmit, setValue, formState } = useForm();
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null); // Initialize with null
-  const [showGenderPicker, setShowGenderPicker] = useState(false);
+  const {
+    userUpdate = {
+      data: {},
+    },
+  } = useSelector(selectApi);
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
 
-  const onDateChange = (event, date) => {
-    setShowDatePicker(false);
-    if (date) {
-      setValue("dateOfBirth", date);
-      setSelectedDate(date);
+  const validationSchema = Yup.object().shape({
+    email: Yup.string().email("Invalid email").required("Email is required"),
+  });
+
+  const handleImagePicker = async (setFieldValue) => {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permissionResult.granted) {
+      alert("Permission to access media library is required!");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setFieldValue("profileImage", result.assets[0].uri);
     }
   };
 
-  const showDatepicker = () => {
-    setShowDatePicker(true);
-  };
+  useEffect(() => {
+    const handleUserUpdateData = async () => {
+      // If the user logs in successfully (based on accessToken), save the login data
+      if (userUpdate?.status === "success") {
+        try {
+          await AuthUser.saveUserData(userUpdate?.data); // Save data to AuthUser
+          dispatch(
+            clearState({
+              output: "userUpdate",
+            })
+          );
+          navigation.navigate("Profile");
+        } catch (error) {
+          console.error("Error saving login data:", error);
+        }
+      }
+    };
 
-  const showGenderPickerHandler = () => {
-    setShowGenderPicker(true);
-  };
-
-  const hideGenderPickerHandler = () => {
-    setShowGenderPicker(false);
-  };
-
-  const toggleGenderPicker = () => {
-    setShowGenderPicker(!showGenderPicker);
-  };
-
-  const onSubmit = (data) => {
-    console.log(data);
-    // Handle form submission logic here
-  };
-
-  const navigation = useNavigation();
-
-  const [selectedGender, setSelectedGender] = useState("");
-
-  const handleGenderChange = (itemValue) => {
-    setSelectedGender(itemValue);
-  };
+    handleUserUpdateData();
+  }, [userUpdate]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView showsVerticalScrollIndicator={false} className="mt-10">
         {/* Header Section */}
-        <View className="flex-row  justify-between items-center mx-3">
+        <View className="flex-row justify-between items-center mx-3">
           <View className="flex-row space-x-2 items-center">
-            <View>
-              <ChevronLeftIcon
-                onPress={() => navigation.goBack()}
-                size={30}
-                font="bold"
-                color="black"
-              />
-            </View>
-            <Text className="text-neutral-800 text-2xl font-bold leading-[28.80px] ">
+            <ChevronLeftIcon
+              onPress={() => navigation.goBack()}
+              size={30}
+              font="bold"
+              color="black"
+            />
+            <Text className="text-neutral-800 text-2xl font-bold leading-[28.80px]">
               Edit Profile
             </Text>
           </View>
         </View>
 
         {/* Fields */}
+        <Formik
+          initialValues={{
+            name: "",
+            email: "",
+            phoneNo: "",
+            profileImage: "",
+          }}
+          validationSchema={validationSchema}
+          onSubmit={(values) => {
+            console.log(values);
+            const data = new FormData();
+            const userInfo = {
+              name: values.name,
+              email: values.email,
+              phoneNumber: values.phoneNo,
+            };
 
-        <View className="mx-3 mt-8">
-          <View>
-            <Controller
-              control={control}
-              render={({ field, fieldState }) => (
-                <>
-                  <TextInput
-                    onChangeText={field.onChange}
-                    value={field.value}
-                    onBlur={field.onBlur}
-                    placeholder="Kamal Hasan"
-                    className="bg-gray-50 p-3 rounded-lg placeholder:text-black shadow-sm"
-                  />
-                  {fieldState.error && <Text>{fieldState.error.message}</Text>}
-                </>
-              )}
-              name="fullName"
-              rules={{ required: "Full Name is required" }}
-            />
+            data.append("userInfo", JSON.stringify(userInfo));
 
-            <Controller
-              control={control}
-              render={({ field, fieldState }) => (
-                <>
-                  <TextInput
-                    onChangeText={field.onChange}
-                    value={field.value}
-                    onBlur={field.onBlur}
-                    placeholder="Kamal "
-                    className="bg-gray-50 p-3 rounded-lg placeholder:text-black shadow-sm mt-5"
-                  />
-                  {fieldState.error && <Text>{fieldState.error.message}</Text>}
-                </>
-              )}
-              name="nickName"
-              rules={{ required: "Full Name is required" }}
-            />
+            if (values.profileImage) {
+              data.append("profileImage", {
+                uri: values.profileImage,
+                type: "image/jpeg",
+                name: `profile_${Date.now()}.jpg`,
+              });
+            }
 
-            {/* Date of Birth */}
-
-            <Controller
-              control={control}
-              render={({ field, fieldState }) => (
-                <>
-                  <TextInput
-                    onFocus={showDatepicker}
-                    value={
-                      selectedDate ? selectedDate.toLocaleDateString() : ""
-                    }
-                    placeholder="Select Date of Birth"
-                    className="bg-gray-50 p-3 rounded-lg placeholder:text-black shadow-sm mt-5"
-                  />
-                  {fieldState.error && <Text>{fieldState.error.message}</Text>}
-                </>
-              )}
-              name="dateOfBirth"
-              rules={{ required: "Date of Birth is required" }}
-            />
-          </View>
-
-          {/* Date Picker */}
-          {showDatePicker && (
-            <DateTimePicker
-              value={selectedDate || new Date()} // Use selectedDate or default to current date
-              mode="date"
-              display="spinner"
-              onChange={onDateChange}
-            />
-          )}
-
-          <Controller
-            control={control}
-            render={({ field, fieldState }) => (
-              <>
-                <TextInput
-                  onChangeText={field.onChange}
-                  value={field.value}
-                  onBlur={field.onBlur}
-                  placeholder="Enter your email "
-                  className="bg-gray-50 p-3 rounded-lg placeholder:text-black shadow-sm mt-5"
-                />
-                {fieldState.error && <Text>{fieldState.error.message}</Text>}
-              </>
-            )}
-            name="email"
-            rules={{
-              required: "Email is required",
-              pattern: {
-                value: /^\S+@\S+$/i,
-                message: "Invalid email address",
-              },
-            }}
-          />
-
-          <Controller
-            control={control}
-            render={({ field, fieldState }) => (
-              <>
-                <TextInput
-                  onChangeText={field.onChange}
-                  value={field.value}
-                  onBlur={field.onBlur}
-                  placeholder="Tel No "
-                  className="bg-gray-50 p-3 rounded-lg placeholder:text-black shadow-sm mt-5"
-                  inputMode="tel"
-                />
-                {fieldState.error && <Text>{fieldState.error.message}</Text>}
-              </>
-            )}
-            name="telNo"
-            rules={{ required: "Full Name is required" }}
-          />
-
-          {/* Gender */}
-          {/* <Controller
-            control={control}
-            render={({ field, fieldState }) => (
-              <>
-                <TouchableWithoutFeedback
-                  onPress={toggleGenderPicker}
-                  style={{ position: "relative", marginTop: 5 }}
-                >
-                  <TextInput
-                    //   onFocus={toggleGenderPicker}
-                    editable={false}
-                    placeholder="Select Gender"
-                    value={field.value}
-                    className="bg-gray-50 p-3 rounded-lg placeholder:text-black shadow-sm mt-5"
-                  />
-                </TouchableWithoutFeedback>
-                {showGenderPicker && (
-                  <Picker
-                    selectedValue={field.value}
-                    onValueChange={(itemValue) => {
-                      setValue("gender", itemValue);
-                      toggleGenderPicker();
-                    }}
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      opacity: 0,
-                    }}
-                  >
-                    <Picker.Item label="Male" value="male" />
-                    <Picker.Item label="Female" value="female" />
-                  </Picker>
-                )}
-                {fieldState.error && <Text>{fieldState.error.message}</Text>}
-              </>
-            )}
-            name="gender"
-            rules={{ required: "Gender is required" }}
-          /> */}
-
-          {/* <View>
-            <Text>Select Gender:</Text>
-            <Picker
-              selectedValue={selectedGender}
-              onValueChange={handleGenderChange}
-              style={{ height: 50, width: 200 }}
+            dispatch(
+              callApi({
+                operationId: UrlBuilder.plantApiLocalhost("user/update"),
+                output: "userUpdate",
+                parameters: {
+                  method: "PUT",
+                  body: data,
+                  hasFile: true,
+                },
+              })
+            );
+          }}
+        >
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            setFieldValue,
+            values,
+            errors,
+            touched,
+          }) => (
+            <View
+              className="flex-1 bg-white px-8 pt-8 mt-20"
+              style={{ borderTopLeftRadius: 50, borderTopRightRadius: 50 }}
             >
-              <Picker.Item label="Select Gender" value="" />
-              <Picker.Item label="Male" value="male" />
-              <Picker.Item label="Female" value="female" />
-              Add more gender options as needed
-            </Picker>
-            {selectedGender !== "" && (
-              <Text>Selected Gender: {selectedGender}</Text>
-            )}
-          </View> */}
+              <View className="form space-y-2">
+                {/* Name Field */}
+                <Text className="text-gray-700 ml-4">Name</Text>
+                <TextInput
+                  className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
+                  onChangeText={handleChange("name")}
+                  onBlur={handleBlur("name")}
+                  value={values.name}
+                  placeholder="Enter your name"
+                  autoCapitalize="none"
+                />
+                {touched.name && errors.name && (
+                  <Text style={{ color: "red", marginLeft: 16 }}>
+                    {errors.name}
+                  </Text>
+                )}
 
-          <Button title="Submit" onPress={handleSubmit(onSubmit)} />
-        </View>
+                {/* Email Field */}
+                <Text className="text-gray-700 ml-4">Email Address</Text>
+                <TextInput
+                  className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
+                  onChangeText={handleChange("email")}
+                  onBlur={handleBlur("email")}
+                  value={values.email}
+                  placeholder="Enter your email"
+                  autoCapitalize="none"
+                />
+                {touched.email && errors.email && (
+                  <Text style={{ color: "red", marginLeft: 16 }}>
+                    {errors.email}
+                  </Text>
+                )}
+
+                {/* Phone Number Field */}
+                <Text className="text-gray-700 ml-4">Phone No</Text>
+                <TextInput
+                  className="p-4 bg-gray-100 text-gray-700 rounded-2xl"
+                  onChangeText={handleChange("phoneNo")}
+                  onBlur={handleBlur("phoneNo")}
+                  value={values.phoneNo}
+                  placeholder="Enter your Phone No"
+                />
+                {touched.phoneNo && errors.phoneNo && (
+                  <Text style={{ color: "red", marginLeft: 16 }}>
+                    {errors.phoneNo}
+                  </Text>
+                )}
+
+                {/* Profile Image Field */}
+                <Text className="text-gray-700 ml-4">Profile Image</Text>
+                <TouchableOpacity
+                  className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
+                  onPress={() => handleImagePicker(setFieldValue)}
+                >
+                  <Text className="text-center text-gray-700">Choose File</Text>
+                </TouchableOpacity>
+                {values.profileImage ? (
+                  <Image
+                    source={{ uri: values.profileImage }}
+                    style={{ width: 100, height: 100, alignSelf: "center" }}
+                  />
+                ) : null}
+              </View>
+
+              <TouchableOpacity
+                className="py-3 bg-green-400 rounded-xl mt-10"
+                onPress={handleSubmit}
+              >
+                <Text className="font-xl font-bold text-center text-gray-700">
+                  Update Profile
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </Formik>
       </ScrollView>
     </SafeAreaView>
   );

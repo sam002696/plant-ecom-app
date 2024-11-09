@@ -1,29 +1,33 @@
 import { ScrollView, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import Banner from "./Banner";
 import SearchBar from "./SearchBar";
 import SpecialOffer from "./SpecialOffer";
 import MostPopular from "./MostPopular";
 import { AuthUser } from "../../helpers/AuthUser";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Homescreen = () => {
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const userData = await AuthUser.getUser(); // Await for user data
-        setUser(userData); // Store user data in state
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
+  useFocusEffect(
+    useCallback(() => {
+      const fetchUserData = async () => {
+        try {
+          const userData = await AuthUser.getUserName(); // Await for user data
+          console.log("userData", userData);
+          setUser(userData); // Store user data in state
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      };
 
-    fetchUserData();
-  }, [AuthUser]);
+      fetchUserData();
+    }, [])
+  );
 
-  // console.log("user home :>>", user);
+  console.log("user home :>>", user);
 
   return (
     <View className="bg-white flex-1">
