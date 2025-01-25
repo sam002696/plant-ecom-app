@@ -51,7 +51,7 @@ _Backend implementation details and instructions can be found in the [Backend Re
 ## Repository Structure
 
 This project is organized into a single **frontend module** for better clarity and maintenance.  
-For backend logic, APIs, and database integration, refer to the [Backend Repository](https://github.com/your-backend-repository-link).
+For backend logic, APIs, and database integration, refer to the [Backend Repository](https://github.com/sam002696/plant-ecom-service).
 
 ---
 
@@ -69,7 +69,7 @@ For backend logic, APIs, and database integration, refer to the [Backend Reposit
 
 - A local environment set up for **React Native** development.
 - **Node.js** and **npm/yarn** installed.
-- Backend service running locally or on a server (refer to the [Backend Repository](https://github.com/your-backend-repository-link)).
+- Backend service running locally or on a server (refer to the [Backend Repository](https://github.com/sam002696/plant-ecom-service)).
 
 ### **Steps:**
 
@@ -98,23 +98,17 @@ npm start
 
 4. **Connect to Backend:**
 
-Ensure the Spring Boot backend is running and the API endpoints are accessible. Update the base API URL in the frontend configuration if necessary. For backend setup instructions, refer to the [Backend Repository](https://github.com/your-backend-repository-link).
+Ensure the Spring Boot backend is running and the API endpoints are accessible. Update the base API URL in the frontend configuration if necessary. For backend setup instructions, refer to the [Backend Repository](https://github.com/sam002696/plant-ecom-service).
 
 ---
 
 ## Project Pictures
 
-### Homepage
-
-![Homepage](https://example.com/homepage.png)
-
-### Cart Page
-
-![Cart Page](https://example.com/cartpage.png)
-
-### Active Orders Page
-
-![Active Orders Page](https://example.com/orderspage.png)
+<p align="center">
+  <img src="https://example.com/homepage.png" alt="Homepage" width="30%" />
+  <img src="https://example.com/cartpage.png" alt="Cart Page" width="30%" />
+  <img src="https://example.com/orderspage.png" alt="Active Orders Page" width="30%" />
+</p>
 
 ---
 
