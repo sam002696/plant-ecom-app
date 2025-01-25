@@ -104,11 +104,9 @@ Ensure the Spring Boot backend is running and the API endpoints are accessible. 
 
 ## Project Pictures
 
-<p align="center">
-  <img src="./assets/readme/home.png" alt="Homepage" width="30%" />
-  <img src="./assets/readme/cart.png" alt="Cart Page" width="30%" />
-  <img src="./assets/readme/active_orders.png" alt="Active Orders Page" width="30%" />
-</p>
+![Homepage](./assets/images/readme/home.png)
+![Cart Page](./assets/images/readme/cart.png)
+![Active Orders Page](./assets/images/readme/active_orders.png)
 
 ---
 
