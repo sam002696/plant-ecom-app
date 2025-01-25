@@ -76,7 +76,7 @@ For backend logic, APIs, and database integration, refer to the [Backend Reposit
 1. **Clone the Repository:**
 
 ```bash
-   git clone https://github.com/your-frontend-repository-link
+   git clone https://github.com/sam002696/plant-ecom-app
 ```
 
 2. **Install Dependencies:**
@@ -105,8 +105,8 @@ Ensure the Spring Boot backend is running and the API endpoints are accessible. 
 ## Project Pictures
 
 <p align="center">
-  <img src="./assets/images/readme/home.png" alt="Homepage" width="30%" />
-  <img src="./assets/images/readme/cart.png" alt="Cart Page" width="30%" />
+  <img src="./assets/images/readme/home.png" alt="Homepage" width="30%" style="margin-right: 10px;" />
+  <img src="./assets/images/readme/cart.png" alt="Cart Page" width="30%" style="margin-right: 10px;" />
   <img src="./assets/images/readme/active_orders.png" alt="Active Orders Page" width="30%" />
 </p>
 
